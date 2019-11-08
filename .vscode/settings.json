@@ -1,0 +1,24 @@
+{
+    "sqltools.connections": [
+        {
+            "askForPassword": false,
+            "database": "University",
+            "dialect": "MySQL",
+            "name": "uni",
+            "port": 3306,
+            "server": "localhost",
+            "username": "root"
+        },
+        {
+            "askForPassword": false,
+            "database": "airline",
+            "dialect": "MySQL",
+            "isActive": false,
+            "isConnected": false,
+            "name": "airline",
+            "port": 3306,
+            "server": "localhost",
+            "username": "root"
+        }
+    ]
+}
