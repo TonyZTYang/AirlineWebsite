@@ -16,4 +16,4 @@ $ pip3 install -r requirement.txt -U
 ## Usage
 
 ## Documentation
-For full documentation (project requirements, ER diagram, relational diagram and all use cases), look under 'documentation' folder.
+For full documentation (project requirements, ER diagram, relational diagram and all use cases), look under [documentation folder](/documentation).
