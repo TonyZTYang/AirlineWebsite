@@ -2,6 +2,21 @@
 from flask import Flask, render_template, request, session, url_for, redirect
 from config import db, secret_key
 
+'''
+# replacement of config.py
+import pymysql.cursors
+
+secret_key = 'Some secret key no one should know'
+
+#Configure MySQL
+db = pymysql.connect(host='mysql server address',
+                       user='username',
+                       password='password',
+                       db= 'airline',
+                       charset='utf8mb4',
+                       cursorclass=pymysql.cursors.DictCursor)
+'''
+
 #Initialize the app from Flask
 app = Flask(__name__)
 
