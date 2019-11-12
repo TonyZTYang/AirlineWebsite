@@ -1,4 +1,4 @@
-# Air Ticket Reservation System Bootstrap + Vue + Flask + Mysql
+# Air Ticket Reservation System 
 A database system for a hypothetic airline company as the final project for CSCI-SHU 213 Databases.
 * Frontend: Vue + Axios
 * Backend: Flask + Mysql
