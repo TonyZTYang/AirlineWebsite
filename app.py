@@ -229,6 +229,41 @@ def regAgentAuth():
 		modify(sql,keys)
 		return render_template('index.html')
 
+@app.route('/regStaffAuth', methods=['POST'])
+def regStaffAuth():
+	#grabs information from the forms
+	email = request.form.get('email')
+	password = md5(request.form.get('password').encode('utf-8')).hexdigest()
+	first_name = request.form.get('first_name')
+	last_name = request.form.get('last_name')
+	airline_name = request.form.get('airline_name')
+	dob = request.form.get('date_of_birth')
+
+	# check if the email already exists
+	sql = 'SELECT * FROM airline_staff WHERE email = %s'
+	key = (email)
+	data = fetchone(sql, key)
+
+	#check if airline exists
+	sql = 'SELECT * FROM airline WHERE name = %s'
+	key = (airline_name)
+	data = fetchall(sql,key)
+	if not data:
+		error = 'The airline does not exist'
+		return render_template('/registers/reg_staff.html', error = error)
+
+	#case handling
+	if(data):
+		#If the previous query returns data, then user exists
+		error = "This user already exists"
+		return render_template('/registers/reg_staff.html', error = error)
+	else:
+		sql = 'INSERT INTO airline_staff \
+			VALUES(%s, %s, %s,%s,%s,%s)'
+		keys = (email,password,first_name,last_name,dob,airline_name)
+		modify(sql,keys)
+		return render_template('index.html')
+
 @app.route('/home')
 def home():
     
