@@ -1,5 +1,7 @@
-#Import Flask Library
+#Import library
 from flask import Flask, render_template, request, session, url_for, redirect
+from hashlib import md5
+# import module
 from config import db, secret_key
 from util import fetchall, fetchone
 
@@ -109,7 +111,7 @@ def login():
 def loginAuth():
 	#grabs information from the forms
 	username = request.form.get('username')
-	password = request.form.get('password')
+	password = md5(request.form.get('password').encode('utf-8')).hexdigest()
 	usertype = request.form.get('usertype')
 	agent_id = request.form.get('agent_id')
 
