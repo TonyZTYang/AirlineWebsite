@@ -265,7 +265,7 @@ def regStaffAuth():
 		modify(sql,keys)
 		return render_template('index.html')
 
-@app.route('/customer')
+@app.route('/customer',methods=['GET','POST'])
 def customer():
 	if not doorman('Customer'):
 		return render_template('noAuth.html')
@@ -282,18 +282,66 @@ def customer():
 	key = (username)
 	my_flight = fetchall(sql,key)
 
+	#flight search
+	depart_airport = request.form.get('depart_airport')
+	arrive_airport = request.form.get('arrive_airport')
+	depart_date = request.form.get('depart_date')
+	return_date = request.form.get('return_date')
+	depart_city = request.form.get('depart_city')
+	arrive_city = request.form.get('arrive_city')
+	airline_name = request.form.get('airline_name')
+	flight_num = request.form.get('flight_num')
+
+	# check for search scinario
+	if depart_airport:
+		sql = 'select distinct airline_name, flight_number, departure_time , \
+				arrival_time, departure_airport, arrival_airport, \
+				status  from flight where departure_airport = %s and \
+				arrival_airport = %s and DATE(departure_time) = %s'
+		keys = (depart_airport, arrive_airport, depart_date) 
+		result = fetchall(sql,keys)
+		if not result:
+			error = 'No outgoing flight exists'
+			return render_template('customer.html', error1=error,name=name, myflight=my_flight)
+		if return_date:
+			sql = 'select distinct airline_name,flight_number,departure_time, \
+				arrival_time, departure_airport, arrival_airport, \
+				status  from flight where departure_airport = %s and \
+				arrival_airport = %s and DATE(departure_time) = %s'
+			keys = (arrive_airport, depart_airport, return_date)
+			return_flight = fetchall(sql, keys)
+			return render_template('customer.html',search1=result,
+					search2=return_flight,name=name, myflight=my_flight)
+		return render_template('customer.html',search1=result,name=name, myflight=my_flight)
+	elif depart_city:
+		sql = 'select distinct airline_name,flight_number,departure_time , \
+				arrival_time, departure_airport, arrival_airport, \
+				status  from flight where departure_airport = \
+				(select name from airport where city = %s) and \
+				arrival_airport = (select name from airport where city = %s) \
+				and DATE(departure_time) = %s'
+		keys = (depart_city, arrive_city, depart_date) 
+		result = fetchall(sql,keys)
+		if not result:
+			error = 'No outgoing flight exists'
+			return render_template('customer.html', error2=error,name=name, myflight=my_flight)
+		if return_date:
+			sql = 'select distinct airline_name,flight_number,departure_time, \
+				arrival_time, departure_airport, arrival_airport, \
+				status  from flight where departure_airport =  \
+				(select name from airport where city = %s) and \
+				arrival_airport = (select name from airport where city = %s) \
+				and DATE(departure_time) = %s'
+			keys = (arrive_city, depart_city, return_date)
+			return_flight = fetchall(sql, keys)
+			return render_template('customer.html',search1=result,
+					search2=return_flight,name=name, myflight=my_flight)
+		return render_template('customer.html',name=name, myflight=my_flight,search1=result)
+
+
 	return render_template('customer.html', name=name, myflight=my_flight)
 		
-@app.route('/post', methods=['GET', 'POST'])
-def post():
-	username = session['username']
-	cursor = db.cursor()
-	blog = request.form['blog']
-	query = 'INSERT INTO blog (blog_post, username) VALUES(%s, %s)'
-	cursor.execute(query, (blog, username))
-	db.commit()
-	cursor.close()
-	return redirect(url_for('home'))
+
 
 @app.route('/logout')
 

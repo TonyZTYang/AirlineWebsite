@@ -24,7 +24,6 @@
             <th>Departure Time</th>	
             <th>Arrival Time</th>
             <th>Status</th>
-        
         {% for line in myflight %}
             <tr>
                 <td>{{line['airline_name']}}</td>
@@ -42,7 +41,7 @@
     <h2 style='margin-bottom: 10px; margin-top: 10px;'>Search for flights</h2>
     <!-- airport search -->
     <h3 style='margin-bottom: 10px; margin-top: 10px;'>Search by airport</h2>
-    <form action="/" method="POST">
+    <form action="/customer" method="POST">
         <input type="text" name = "depart_airport" placeholder="Departure Airport" required>
         <span style = 'padding:10px;'>   </span>
         <input type="text" name = "arrive_airport" placeholder="Arrival Airport" reuqired></br>
@@ -58,7 +57,7 @@
 
     <!-- city search -->
     <h3 style='margin-bottom: 10px; margin-top: 10px;'>Search by city</h2>
-    <form action="/" method="POST">
+    <form action="/customer" method="POST">
         <input type="text" name = "depart_city" placeholder="Departure City" reuqired>
         <span style = 'padding:10px;'>   </span>
         <input type="text" name = "arrive_city" placeholder="Arrival City" reuqired></br>
