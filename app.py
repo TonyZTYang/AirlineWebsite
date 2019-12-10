@@ -95,9 +95,18 @@ def public_info_search():
 def login():
 	return render_template('login.html')
 
+# defin routes for specific login pages
 @app.route('/login/cus')
 def login_cus():
 	return render_template('login_cus.html')
+
+@app.route('/login/agent')
+def login_agent():
+	return render_template('login_agent.html')
+
+@app.route('/login/staff')
+def login_staff():
+	return render_template('login_staff.html')
 
 #Define route for register type choosing
 @app.route('/register')

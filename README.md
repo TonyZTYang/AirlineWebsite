@@ -57,7 +57,7 @@ $ pip3 install -r requirement.txt -U
 ### Enforcing complex constraints
 - [ ] Prevention of http attacks
 - [ ] Sessions for each user and authentications each step after login
-- [ ] Prepared statements
+- [x] Prepared statements
 - [ ] Prevent cross-site scripting
 
 ## Documentation
