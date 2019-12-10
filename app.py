@@ -161,7 +161,7 @@ def reg_staff():
 	return render_template('/registers/reg_staff.html')
 
 #Authenticates the register
-@app.route('/regCustomerAuth', methods=['GET', 'POST'])
+@app.route('/regCustomerAuth', methods=['POST'])
 def regCustomerAuth():
 	#grabs information from the forms
 	email = request.form.get('email')
@@ -197,6 +197,35 @@ def regCustomerAuth():
 			VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
 		keys = (email,name,password,building_num,street,city,state,phone_num,
 		passport_num, passport_expiration, passport_country, dob)
+		modify(sql,keys)
+		return render_template('index.html')
+
+@app.route('/regAgentAuth', methods=['POST'])
+def regAgentAuth():
+	#grabs information from the forms
+	email = request.form.get('email')
+	password = md5(request.form.get('password').encode('utf-8')).hexdigest()
+	agent_id = request.form.get('agent_id')
+
+	# info validation
+	if not agent_id.isdigit() :
+		error = 'Please enter in correct form'
+		return render_template('/registers/reg_agent.html', error = error)
+
+	# check if the email already exists
+	sql = 'SELECT * FROM Booking_agent WHERE email = %s'
+	key = (email)
+	data = fetchone(sql, key)
+
+	#case handling
+	if(data):
+		#If the previous query returns data, then user exists
+		error = "This user already exists"
+		return render_template('/registers/reg_agent.html', error = error)
+	else:
+		sql = 'INSERT INTO Booking_agent \
+			VALUES(%s, %s, %s)'
+		keys = (email,password,agent_id)
 		modify(sql,keys)
 		return render_template('index.html')
 

@@ -1,1 +1,38 @@
-agent!
+<html>
+
+<head>
+</head>
+
+<style>
+	body {text-align: center;}
+	input {margin-top: 10px; padding-bottom: 5px;}
+</style>
+
+
+<body>
+	<h3>Booking Agent Login</h3>
+	<form action="/regAgentAuth" method="POST">
+        <input type="Email" name = "email" placeholder="Email" required/>
+        <span style = 'padding:10px;'></span>
+		<input type="password" name = "password" placeholder="Password" id='password' required/><br>
+        <input type='password' name = 'confirm_password' placeholder='Confirm Password' oninput="check(this)" reuqired>
+        <span style = 'padding:10px;'></span>
+		<input type='text' name = 'agent_id' placeholder="Booking Agent ID" required><br>
+		<input type="submit" value = Register />
+		{% if error %}
+			<p class="error"><strong>Error:</strong> {{error}}</p>
+		{% endif %}
+		<script language='javascript' type='text/javascript'>
+			function check(input) {
+				if (input.value != document.getElementById('password').value) {
+					input.setCustomValidity('Password Must be Matching.');
+				} else {
+					// input is valid -- reset the error message
+					input.setCustomValidity('');
+				}
+			}
+		</script>
+	</form>
+	<a href="/">Go back</a>
+</body>
+</html>

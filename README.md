@@ -19,8 +19,8 @@ $ pip3 install -r requirement.txt -U
 ### General
 - [x] View Public Info
 - [ ] Register
-  - [ ] Customer
-  - [ ] Booking Agent
+  - [x] Customer
+  - [x] Booking Agent
   - [ ] Airline Staff
 
 - [x] Login
