@@ -49,11 +49,13 @@ def modify(sql,keys):
     return result 
 
 #utility function
-def doorman():
+def doorman(lock):
     username = session.get('username')
     usertype = session.get('usertype')
 
     if not username or not usertype :
+        return False
+    if usertype != lock:
         return False
     sql = 'select * from '+ usertype + ' where email = %s'
     key = (username)

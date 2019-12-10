@@ -28,8 +28,8 @@ $ pip3 install -r requirement.txt -U
   - [x] Booking Agent
   - [x] Airline Staff
 ### Customer
-- [ ] View my flight
-- [ ] Search for flight
+- [x] View my flight
+- [x] Search for flight
 - [ ] Purchase Tickets
 - [ ] Giver ratings and comments on previous flight
 - [ ] Track my spending

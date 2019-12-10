@@ -26,8 +26,6 @@ app = Flask(__name__)
 #Define a route to index
 @app.route('/', methods = ['GET'])
 def index_get():
-	if doorman():
-		return render_template('index.html', logged = True)
 	return render_template('index.html')
 
 #Add route for public info search
@@ -138,7 +136,9 @@ def loginAuth():
 		#session is a built in
 		session['username'] = username
 		session['usertype'] = usertype
-		return redirect(url_for('home'))
+		if usertype == 'Customer':
+			return redirect(url_for('customer'))
+		# return redirect(url_for('home'))
 	else:
 		#returns an error message to the html page
 		error = 'Invalid login or username'
@@ -265,12 +265,24 @@ def regStaffAuth():
 		modify(sql,keys)
 		return render_template('index.html')
 
-@app.route('/home')
-def home():
-	if not doorman():
+@app.route('/customer')
+def customer():
+	if not doorman('Customer'):
 		return render_template('noAuth.html')
-	else:
-		return render_template('home.html')
+
+	#get name for welcome message
+	username = session.get('username')
+	sql = 'select name from customer where email = %s'
+	key = (username)
+	name = fetchone(sql,key)
+	
+	#view my flights
+	sql = 'SELECT * FROM flight natural join ticket WHERE \
+           	ticket.customer_email = %s and departure_time > now()'
+	key = (username)
+	my_flight = fetchall(sql,key)
+
+	return render_template('customer.html', name=name, myflight=my_flight)
 		
 @app.route('/post', methods=['GET', 'POST'])
 def post():
