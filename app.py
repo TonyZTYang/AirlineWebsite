@@ -95,6 +95,10 @@ def public_info_search():
 def login():
 	return render_template('login.html')
 
+@app.route('/login/cus')
+def login_cus():
+	return render_template('login_cus.html')
+
 #Define route for register type choosing
 @app.route('/register')
 def register():

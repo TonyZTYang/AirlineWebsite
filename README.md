@@ -17,7 +17,7 @@ $ pip3 install -r requirement.txt -U
 
 ## Use Cases
 ### General
-- [ ] View Public Info
+- [x] View Public Info
 - [ ] Register
   - [ ] Customer
   - [ ] Booking Agent
