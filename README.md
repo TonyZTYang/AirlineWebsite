@@ -30,7 +30,7 @@ $ pip3 install -r requirement.txt -U
 ### Customer
 - [x] View my flight
 - [x] Search for flight
-- [ ] Purchase Tickets
+- [x] Purchase Tickets
 - [ ] Giver ratings and comments on previous flight
 - [ ] Track my spending
 - [x] Logout

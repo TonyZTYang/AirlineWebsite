@@ -1,6 +1,7 @@
 #Import library
-from flask import Flask, render_template, request, session, url_for, redirect
+from flask import Flask, render_template, request, session, url_for, redirect,g
 from hashlib import md5
+import random
 # import module
 from config import db, secret_key
 from util import fetchall, fetchone, modify, doorman
@@ -270,27 +271,26 @@ def customer():
 	if not doorman('Customer'):
 		return render_template('noAuth.html')
 
-	#get name for welcome message
+	#* get name for welcome message
 	username = session.get('username')
 	sql = 'select name from customer where email = %s'
 	key = (username)
 	name = fetchone(sql,key)
 	
-	#view my flights
+	#* view my flights
 	sql = 'SELECT * FROM flight natural join ticket WHERE \
            	ticket.customer_email = %s and departure_time > now()'
 	key = (username)
 	my_flight = fetchall(sql,key)
 
-	#flight search
+	#* flight search
 	depart_airport = request.form.get('depart_airport')
 	arrive_airport = request.form.get('arrive_airport')
 	depart_date = request.form.get('depart_date')
 	return_date = request.form.get('return_date')
 	depart_city = request.form.get('depart_city')
 	arrive_city = request.form.get('arrive_city')
-	airline_name = request.form.get('airline_name')
-	flight_num = request.form.get('flight_num')
+	
 
 	# check for search scinario
 	if depart_airport:
@@ -338,6 +338,52 @@ def customer():
 					search2=return_flight,name=name, myflight=my_flight)
 		return render_template('customer.html',name=name, myflight=my_flight,search1=result)
 
+	# * purchase tickets
+	airline_name = request.form.get('airline_name')
+	flight_num = request.form.get('flight_num')
+	departure_datetime = request.form.get('departure_datetime')
+
+	if airline_name:
+		sql = 'select * from flight where airline_name = %s and \
+				flight_number = %s and departure_time = %s'
+		keys = (airline_name, flight_num, departure_datetime) 
+		result = fetchall(sql,keys)
+		if not result:
+			error = 'No such flight exists'
+			return render_template('customer.html', error3=error,name=name, myflight=my_flight)
+
+		#calculate price
+		sql = 'select count(*) as head from ticket where airline_name = %s and flight_number = %s and departure_time = %s'
+		key = (result[0]['airline_name'],result[0]['flight_number'],result[0]['departure_time'])
+		purchase_count = fetchone(sql,key)
+		purchase_count = purchase_count['head']
+		total_seats = fetchone('select seats from airplane where airplane.id = %s',(result[0]['airplane_id']))['seats']
+		result[0]['availability'] = 'YES'
+		if purchase_count/total_seats == 1:
+			result[0]['availability'] = 'NO'
+		elif purchase_count/total_seats >= 0.7:
+			result[0]['price'] = result[0]['price'] * 1.2
+		# gather purchase info
+		session['airline_name'] = result[0]['airline_name']
+		session['flight_number'] = result[0]['flight_number']
+		session['departure_time'] = result[0]['departure_time']
+		session['sold_price'] = result[0]['price']
+		return render_template('customer.html',search3=result,name=name, myflight=my_flight)
+
+	
+	if request.form.get('card_number'):
+		card_number = request.form.get('card_number')
+		card_type = request.form.get('card_type')
+		name_on_card = request.form.get('name_on_card')
+		expiration_date = request.form.get('expiration_date')
+		sql = 'insert into ticket values \
+			(%s,%s,%s,%s,%s,%s, CURDATE(), CURTIME(),%s, %s,%s,%s,NULL)'
+		key = (random.randint(1,255),session['sold_price'],card_type, \
+			card_number, name_on_card, expiration_date, \
+				session['flight_number'], \
+				session['departure_time'],session['airline_name'], \
+					session['username'])
+		modify(sql,key)
 
 	return render_template('customer.html', name=name, myflight=my_flight)
 		

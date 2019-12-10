@@ -121,16 +121,14 @@
 		</table>
 		{% endif %}	
 
-    <h2>Check flight status</h2>
-    <!-- flight status -->
-    <form action="/" method="POST">
+    <h2>Purchase ticket</h2>
+    <!-- ticket purchase -->
+    <form action="/customer" method="POST">
         <input type="text" name = "airline_name" placeholder="Airline Name" required>
         <span style = 'padding:10px;'>   </span>
         <input type="text" name = "flight_num" placeholder="Flight Number" required></br>
-        <span>Departure Date: </span>
-        <input type="date" name = "depart_date" required><br>
-        <!-- <span>Arrival Date (Optional): </span>	
-        <input type="date" name = "arrive_date"><br> -->
+        <span>Departure DateTime: </span>
+        <input type="datetime" name = "departure_datetime" required><br>
         <input type="submit" value = Search />
         {% if error3 %}
             <p class="error"><strong>Error:</strong> {{error3}}</p>
@@ -139,7 +137,7 @@
 
     <!-- desplay search result -->
     {% if search3 %}
-    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Search result</h3>
+    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Flight Info{{test}}</h3>
     <table align= 'center'>
             <th>Airline Name</th>
             <th>Flight Number</th>
@@ -148,6 +146,8 @@
             <th>Departure Time</th>	
             <th>Arrival Time</th>
             <th>Status</th>
+            <th>Availability</th>
+            <th>Price</th>
         
         {% for line in search3 %}
             <tr>
@@ -158,9 +158,23 @@
                 <td>{{line['departure_time']}}</td>
                 <td>{{line['arrival_time']}}</td>
                 <td>{{line['status']}}</td>
+                <td>{{line['availability']}}</td>
+                <td>{{line['price']}}</td>
             </tr>
         {% endfor %}
     </table>
+    <form action="/customer" method="POST">
+        <input type="text" name = "card_number" placeholder="Card Number" required>
+        <span style = 'padding:10px;'>   </span>
+        <input type="text" name = "card_type" placeholder="Card Type" reuqired></br>
+        <input type="text" name = "name_on_card" placeholder="Name On Card" reuqired></br>
+        <span>Expiration Date: </span>
+        <input type='date' name = 'expiration_date' required>
+        <input type="submit" value = Search />
+        {% if error4 %}
+            <p class="error"><strong>Error:</strong> {{error4}}</p>
+        {% endif %}
+    </form>
 		{% endif %}		
 
 </body>

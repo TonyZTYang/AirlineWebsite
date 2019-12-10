@@ -37,16 +37,10 @@ def fetchone(sql,keys):
 
 def modify(sql,keys):
 
-    result = 0
-    try:
         with db:
             cur = db.cursor()
             cur.execute(sql,keys)
-            result = cur.fetchone()
         db.commit()
-    finally:
-        result = 1
-    return result 
 
 #utility function
 def doorman(lock):
