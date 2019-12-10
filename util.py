@@ -1,4 +1,5 @@
 '''A module storing common utility funcions'''
+from flask import Flask, render_template, request, session, url_for, redirect
 from config import db
 
 #database functions
@@ -48,3 +49,16 @@ def modify(sql,keys):
     return result 
 
 #utility function
+def doorman():
+    username = session.get('username')
+    usertype = session.get('usertype')
+
+    if not username or not usertype :
+        return False
+    sql = 'select * from '+ usertype + ' where email = %s'
+    key = (username)
+    data = fetchone(sql,key)
+    if not data:
+        return False
+    else:
+        return True

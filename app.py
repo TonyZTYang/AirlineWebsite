@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, session, url_for, redirect
 from hashlib import md5
 # import module
 from config import db, secret_key
-from util import fetchall, fetchone, modify
+from util import fetchall, fetchone, modify, doorman
 
 '''
 # replacement of config.py
@@ -26,6 +26,8 @@ app = Flask(__name__)
 #Define a route to index
 @app.route('/', methods = ['GET'])
 def index_get():
+	if doorman():
+		return render_template('index.html', logged = True)
 	return render_template('index.html')
 
 #Add route for public info search
@@ -136,8 +138,7 @@ def loginAuth():
 		#session is a built in
 		session['username'] = username
 		session['usertype'] = usertype
-		# return redirect(url_for('home'))
-		return 'logged in'
+		return redirect(url_for('home'))
 	else:
 		#returns an error message to the html page
 		error = 'Invalid login or username'
@@ -266,17 +267,10 @@ def regStaffAuth():
 
 @app.route('/home')
 def home():
-    
-    username = session['username']
-    cursor = db.cursor()
-    query = 'SELECT ts, blog_post FROM blog WHERE username = %s ORDER BY ts DESC'
-    cursor.execute(query, (username))
-    data1 = cursor.fetchall() 
-    for each in data1:
-        print(each['blog_post'])
-    cursor.close()
-    return render_template('home.html', username=username, posts=data1)
-
+	if not doorman():
+		return render_template('noAuth.html')
+	else:
+		return render_template('home.html')
 		
 @app.route('/post', methods=['GET', 'POST'])
 def post():
@@ -290,10 +284,12 @@ def post():
 	return redirect(url_for('home'))
 
 @app.route('/logout')
+
 def logout():
-	session.pop('username')
+	session.pop('username',None)
+	session.pop('usertype', None)
 	return redirect('/')
-		
+
 app.secret_key = secret_key
 
 #Run the app on localhost port 5000

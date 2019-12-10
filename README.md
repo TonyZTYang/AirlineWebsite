@@ -18,10 +18,10 @@ $ pip3 install -r requirement.txt -U
 ## Use Cases
 ### General
 - [x] View Public Info
-- [ ] Register
+- [x] Register
   - [x] Customer
   - [x] Booking Agent
-  - [ ] Airline Staff
+  - [x] Airline Staff
 
 - [x] Login
   - [x] Customer
@@ -33,14 +33,14 @@ $ pip3 install -r requirement.txt -U
 - [ ] Purchase Tickets
 - [ ] Giver ratings and comments on previous flight
 - [ ] Track my spending
-- [ ] Logout
+- [x] Logout
 ### Booking Agent
 - [ ] View my flights
 - [ ] Search for flights
 - [ ] Purchase tickets
 - [ ] View my commision
 - [ ] View top customers
-- [ ] Logout
+- [x] Logout
 ### Airline Staff
 - [ ] View flights
 - [ ] Create new flights
@@ -53,10 +53,10 @@ $ pip3 install -r requirement.txt -U
 - [ ] View reports
 - [ ] Comparison of revenue earned
 - [ ] View top destination
-- [ ] Logout
+- [x] Logout
 ### Enforcing complex constraints
-- [ ] Prevention of http attacks
-- [ ] Sessions for each user and authentications each step after login
+- [x] Prevention of http attacks
+- [x] Sessions for each user and authentications each step after login
 - [x] Prepared statements
 - [ ] Prevent cross-site scripting
 
