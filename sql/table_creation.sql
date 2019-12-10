@@ -11,7 +11,7 @@ CREATE TABLE airplane(
 );
 
 CREATE TABLE airline_staff(
-	username varchar(255) PRIMARY KEY,
+	email varchar(255) PRIMARY KEY,
 	password varchar(255),
 	first_name varchar(255),
 	last_name varchar(255),
@@ -23,7 +23,7 @@ CREATE TABLE airline_staff(
 CREATE TABLE phone_num (
 	phone_number bigint(20) PRIMARY KEY,
 	owner varchar(255),
-	FOREIGN KEY (owner) REFERENCES airline_staff(username) ON DELETE CASCADE
+	FOREIGN KEY (owner) REFERENCES airline_staff(email) ON DELETE CASCADE
 );
 
 CREATE TABLE airport(

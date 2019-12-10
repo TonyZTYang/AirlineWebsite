@@ -7,10 +7,23 @@
 		table, th, td{border: 1px solid black;}
 </style>
 <body>
-	<h1>Choose Login Type below</h1>
-	<a href="/login/cus" style='margin-right: 10px;'>Customer</a>
-	<a href="/login/agent" style='margin-right: 10px;'>Booking Agent</a>
-	<a href="/login/staff">Airline Staff</a>
+	<h2>Enter Your Info below</h2>
+	<form action="/loginAuth" method="POST">
+		<input type="email" name = "username" placeholder="Username" required/> </br>
+		<input type="password" name = "password" placeholder="Password" required/></br>
+		<select name="usertype" style='margin-top:10px'>
+			<option value="Customer" selected>Customer</option>
+			<option value="Booking_agent">Booking Agent</option>
+			<option value="airline_staff">Airline Staff</option>
+		</select><br>
+		<input type="text" name = 'agent_id' placeholder='Booking Agent ID'>
+		<span>(optional)</span>
+		<br><br>
+		<input type="submit" value = Login />
+		{% if error %}
+			<p class="error"><strong>Error:</strong> {{error}}</p>
+		{% endif %}
+	</form>
 	<br><br><br>
 	<a href="/" style='margin-top: 200px'>Go back</a>
 

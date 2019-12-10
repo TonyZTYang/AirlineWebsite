@@ -17,7 +17,8 @@ insert into airplane values
 (67890,400,'china eastern');
 
 insert into airline_staff values
-('asdfa','asdfadf','tony','yang','1997-9-1','china eastern');
+('asdfa','asdfadf','tony','yang','1997-9-1','china eastern'),
+('abc@123.com','abcd','t','y','1997-09-01','china eastern');
 
 insert into flight values
 (1,'2019-11-5 11:12:12','2019-11-6 10:00:00',125,'on-time','china eastern',12345,'jfk','pvg'),

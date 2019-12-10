@@ -1,7 +1,7 @@
 #Import Flask Library
 from flask import Flask, render_template, request, session, url_for, redirect
 from config import db, secret_key
-from util import fetchall
+from util import fetchall, fetchone
 
 '''
 # replacement of config.py
@@ -29,6 +29,7 @@ def index_get():
 #Add route for public info search
 @app.route('/', methods = ['POST'])
 def public_info_search():
+	error = None
 	# fetch info from form
 	depart_airport = request.form.get('depart_airport')
 	arrive_airport = request.form.get('arrive_airport')
@@ -47,6 +48,9 @@ def public_info_search():
 				arrival_airport = %s and DATE(departure_time) = %s'
 		keys = (depart_airport, arrive_airport, depart_date) 
 		result = fetchall(sql,keys)
+		if not result:
+			error = 'No outgoing flight exists'
+			return render_template('index.html', error1=error)
 		if return_date:
 			sql = 'select distinct airline_name,flight_number,departure_time, \
 				arrival_time, departure_airport, arrival_airport, \
@@ -66,6 +70,9 @@ def public_info_search():
 				and DATE(departure_time) = %s'
 		keys = (depart_city, arrive_city, depart_date) 
 		result = fetchall(sql,keys)
+		if not result:
+			error = 'No outgoing flight exists'
+			return render_template('index.html', error2=error)
 		if return_date:
 			sql = 'select distinct airline_name,flight_number,departure_time, \
 				arrival_time, departure_airport, arrival_airport, \
@@ -86,59 +93,58 @@ def public_info_search():
 				and DATE(departure_time) = %s'
 		keys = (airline_name, flight_num, depart_date) 
 		result = fetchall(sql,keys)
+		if not result:
+			error = 'No such flight exists'
+			return render_template('index.html', error3=error)
 		return render_template('index.html',search3=result)
-	else:
-		return 'form submission not matching'
+	
 
-#Define route for login type choosing
+#Define route for login
 @app.route('/login')
 def login():
 	return render_template('login.html')
 
-# defin routes for specific login pages
-@app.route('/login/cus')
-def login_cus():
-	return render_template('login_cus.html')
+#Authenticates the login
+@app.route('/loginAuth', methods=[ 'POST'])
+def loginAuth():
+	#grabs information from the forms
+	username = request.form.get('username')
+	password = request.form.get('password')
+	usertype = request.form.get('usertype')
+	agent_id = request.form.get('agent_id')
 
-@app.route('/login/agent')
-def login_agent():
-	return render_template('login_agent.html')
+	# execute sql to check for authenticity
+	if usertype == 'Booking_agent':
+			if agent_id:
+				sql = 'SELECT * FROM ' + usertype + ' WHERE email = %s \
+				and password = %s and booking_agent_id = %s'
+				keys = (username, password, agent_id)
+				data = fetchone(sql,keys)
+			else:
+				error = 'Booking agent id not entered'
+				return render_template('login.html', error=error)
+	else:
+		sql = 'SELECT * FROM ' + usertype + ' WHERE email = %s and password = %s'
+		keys = (username, password)
+	data = fetchone(sql,keys)
 
-@app.route('/login/staff')
-def login_staff():
-	return render_template('login_staff.html')
+	# case handling
+	if(data):
+		#creates a session for the the user
+		#session is a built in
+		session['username'] = username
+		session['usertype'] = usertype
+		# return redirect(url_for('home'))
+		return 'logged in'
+	else:
+		#returns an error message to the html page
+		error = 'Invalid login or username'
+		return render_template('login.html', error=error)
 
 #Define route for register type choosing
 @app.route('/register')
 def register():
 	return render_template('register.html')
-
-#Authenticates the login
-@app.route('/loginAuth', methods=['GET', 'POST'])
-def loginAuth():
-	#grabs information from the forms
-	username = request.form['username']
-	password = request.form['password']
-
-	#cursor used to send queries
-	cursor = db.cursor()
-	#executes query
-	query = 'SELECT * FROM user WHERE username = %s and password = %s'
-	cursor.execute(query, (username, password))
-	#stores the results in a variable
-	data = cursor.fetchone()
-	#use fetchall() if you are expecting more than 1 data row
-	cursor.close()
-	error = None
-	if(data):
-		#creates a session for the the user
-		#session is a built in
-		session['username'] = username
-		return redirect(url_for('home'))
-	else:
-		#returns an error message to the html page
-		error = 'Invalid login or username'
-		return render_template('login.html', error=error)
 
 #Authenticates the register
 @app.route('/registerAuth', methods=['GET', 'POST'])
