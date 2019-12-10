@@ -23,10 +23,10 @@ $ pip3 install -r requirement.txt -U
   - [ ] Booking Agent
   - [ ] Airline Staff
 
-- [ ] Login
-  - [ ] Customer
-  - [ ] Booking Agent
-  - [ ] Airline Staff
+- [x] Login
+  - [x] Customer
+  - [x] Booking Agent
+  - [x] Airline Staff
 ### Customer
 - [ ] View my flight
 - [ ] Search for flight

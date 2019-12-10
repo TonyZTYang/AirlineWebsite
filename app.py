@@ -143,10 +143,22 @@ def loginAuth():
 		error = 'Invalid login or username'
 		return render_template('login.html', error=error)
 
-#Define route for register type choosing
+#Define routes for register types
 @app.route('/register')
 def register():
 	return render_template('register.html')
+
+@app.route('/register/customer')
+def reg_customer():
+	return render_template('/registers/reg_customer.html')
+
+@app.route('/register/agent')
+def reg_agent():
+	return render_template('/registers/reg_agent.html')
+
+@app.route('/register/staff')
+def reg_staff():
+	return render_template('/registers/reg_staff.html')
 
 #Authenticates the register
 @app.route('/registerAuth', methods=['GET', 'POST'])
