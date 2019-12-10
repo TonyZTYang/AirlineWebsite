@@ -1,0 +1,52 @@
+<html>
+
+<head>
+</head>
+
+<style>
+	body {text-align: center;}
+	input {margin-top: 10px; padding-bottom: 5px;}
+</style>
+
+
+<body>
+	<h3>Customer Login</h3>
+	<form action="/regCustomerAuth" method="POST">
+		<input type="Email" name = "email" placeholder="Email" required/> 
+		<span style = 'padding:10px;'></span>
+		<input type='text' name = 'name' placeholder="Name" required></br>
+		<input type="password" name = "password" placeholder="Password" id='password' required/>
+		<span style = 'padding:10px;'></span>
+		<input type='password' name = 'confirm_password' placeholder='Confirm Password' oninput="check(this)" reuqired></br>
+		<input type='text' name = 'building_number' placeholder="Building Number" required>
+		<span style = 'padding:10px;'></span>	
+		<input type='text' name = 'street' placeholder="Street" required><br>
+		<input type='text' name = 'city' placeholder="City" required>
+		<span style = 'padding:10px;'></span>
+		<input type='text' name = 'state' placeholder="State" required><br>
+		<input type='text' name = 'phone_number' placeholder="Phone Number" required>
+		<span style = 'padding:10px;'></span>
+		<input type='text' name = 'passport_number' placeholder="Passport Number" required><br>
+		<span>Passport Expiration: </span>
+		<input type='date' name = 'passport_expiration' placeholder="Passport Expiration" required><br>
+		<input type='text' name = 'passport_country' placeholder="Passport Country" required><br>
+		<span>Date of birth:  </span>
+		<input type='date' name = 'date_of_birth' required>	<br>
+		<input type="submit" value = Register />
+		{% if error %}
+			<p class="error"><strong>Error:</strong> {{error}}</p>
+		{% endif %}
+		<script language='javascript' type='text/javascript'>
+			function check(input) {
+				if (input.value != document.getElementById('password').value) {
+					input.setCustomValidity('Password Must be Matching.');
+				} else {
+					// input is valid -- reset the error message
+					input.setCustomValidity('');
+				}
+			}
+		</script>
+	</form>
+	<a href="/">Go back</a>
+</body>
+</html>

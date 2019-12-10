@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, session, url_for, redirect
 from hashlib import md5
 # import module
 from config import db, secret_key
-from util import fetchall, fetchone
+from util import fetchall, fetchone, modify
 
 '''
 # replacement of config.py
@@ -161,30 +161,43 @@ def reg_staff():
 	return render_template('/registers/reg_staff.html')
 
 #Authenticates the register
-@app.route('/registerAuth', methods=['GET', 'POST'])
-def registerAuth():
+@app.route('/regCustomerAuth', methods=['GET', 'POST'])
+def regCustomerAuth():
 	#grabs information from the forms
-	username = request.form['username']
-	password = request.form['password']
+	email = request.form.get('email')
+	name = request.form.get('name')
+	password = md5(request.form.get('password').encode('utf-8')).hexdigest()
+	building_num = request.form.get('building_number')
+	street = request.form.get('street')
+	city = request.form.get('city')
+	state = request.form.get('state')
+	phone_num = request.form.get('phone_number')
+	passport_num = request.form.get('passport_number')
+	passport_expiration = request.form.get('passport_expiration')
+	passport_country = request.form.get('passport_country')
+	dob = request.form.get('date_of_birth')
 
-	#cursor used to send queries
-	cursor = db.cursor()
-	#executes query
-	query = 'SELECT * FROM user WHERE username = %s'
-	cursor.execute(query, (username))
-	#stores the results in a variable
-	data = cursor.fetchone()
-	#use fetchall() if you are expecting more than 1 data row
-	error = None
+	# info validation
+	if not building_num.isdigit() and not phone_num.isdigit():
+		error = 'Please enter in correct form'
+		return render_template('/registers/reg_customer.html', error = error)
+
+	# check if the email already exists
+	sql = 'SELECT * FROM Customer WHERE email = %s'
+	key = (email)
+	data = fetchone(sql, key)
+
+	#case handling
 	if(data):
 		#If the previous query returns data, then user exists
 		error = "This user already exists"
-		return render_template('register.html', error = error)
+		return render_template('/registers/reg_customer.html', error = error)
 	else:
-		ins = 'INSERT INTO user VALUES(%s, %s)'
-		cursor.execute(ins, (username, password))
-		db.commit()
-		cursor.close()
+		sql = 'INSERT INTO Customer \
+			VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+		keys = (email,name,password,building_num,street,city,state,phone_num,
+		passport_num, passport_expiration, passport_country, dob)
+		modify(sql,keys)
 		return render_template('index.html')
 
 @app.route('/home')
