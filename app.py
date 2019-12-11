@@ -257,10 +257,6 @@ def regStaffAuth():
 	airline_name = request.form.get('airline_name')
 	dob = request.form.get('date_of_birth')
 
-	# check if the email already exists
-	sql = 'SELECT * FROM airline_staff WHERE email = %s'
-	key = (email)
-	data = fetchone(sql, key)
 
 	#check if airline exists
 	sql = 'SELECT * FROM airline WHERE name = %s'
@@ -269,6 +265,11 @@ def regStaffAuth():
 	if not data:
 		error = 'The airline does not exist'
 		return render_template('/registers/reg_staff.html', error = error)
+
+	# check if the email already exists
+	sql = 'SELECT * FROM airline_staff WHERE email = %s'
+	key = (email)
+	data = fetchone(sql, key)
 
 	#case handling
 	if(data):
@@ -622,7 +623,24 @@ def agent():
 				myflight=my_flight, purchase_error= purchase_error)
 
 	return render_template('agent.html', name = username, myflight = my_flight)
-		
+
+@app.route('/staff',methods=["GET","POST"])
+def staff():
+	if not doorman('airline_staff'):
+		return render_template('noAuth.html')
+
+	#* get name for welcome message
+	username = session.get('username')
+	
+	#* view my flights
+	sql = 'SELECT * FROM flight WHERE airline_name = (select airline_name \
+		from airline_staff where email = %s) \
+		and departure_time between now() and date_add(now(), interval 30 day)'
+	key = (username)
+	my_flight = fetchall(sql,key)
+
+	return render_template('staff.html', name = username, myflight = my_flight)
+
 @app.route('/logout')
 def logout():
 	session.pop('username',None)

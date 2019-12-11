@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+</head>
+<style>
+		body {text-align: center;}
+		input {margin-top: 10px;}
+		table, th, td{border: 1px solid black;}
+</style>
+
+<body>
+    <a href='/logout'><p style="text-align:right">Logout</p></a>
+    <h1>Welcome, {{name}}</h1>
+
+    <!-- future flights -->
+    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Future flights</h3>
+    <table align= 'center'>
+            <th>Airline Name</th>
+            <th>Flight Number</th>
+            <th>Departure Airport</th>
+            <th>Arrival Airport</th>
+            <th>Departure Time</th>	
+            <th>Arrival Time</th>
+            <th>Status</th>
+    
+        {% for line in myflight %}
+            <tr>
+                <td>{{line['airline_name']}}</td>
+                <td>{{line['flight_number']}}</td>
+                <td>{{line['departure_airport']}}</td>
+                <td>{{line['arrival_airport']}}</td>
+                <td>{{line['departure_time']}}</td>
+                <td>{{line['arrival_time']}}</td>
+                <td>{{line['status']}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+	<!-- desplay specification result -->
+    {% if search1 %}
+    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Search result</h3>
+    <table align= 'center'>
+            <th>Airline Name</th>
+            <th>Flight Number</th>
+            <th>Departure Airport</th>
+            <th>Arrival Airport</th>
+            <th>Departure Time</th>	
+            <th>Arrival Time</th>
+            <th>Status</th>
+        
+        {% for line in search1 %}
+            <tr>
+                <td>{{line['airline_name']}}</td>
+                <td>{{line['flight_number']}}</td>
+                <td>{{line['departure_airport']}}</td>
+                <td>{{line['arrival_airport']}}</td>
+                <td>{{line['departure_time']}}</td>
+                <td>{{line['arrival_time']}}</td>
+                <td>{{line['status']}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}	
+    
+    {% if search2 %}
+    <table align= 'center', style='margin-top:20px'>
+            <th>Airline Name</th>
+            <th>Flight Number</th>
+            <th>Departure Airport</th>
+            <th>Arrival Airport</th>
+            <th>Departure Time</th>	
+            <th>Arrival Time</th>
+            <th>Status</th>
+        
+        {% for line in search2 %}
+            <tr>
+                <td>{{line['airline_name']}}</td>
+                <td>{{line['flight_number']}}</td>
+                <td>{{line['departure_airport']}}</td>
+                <td>{{line['arrival_airport']}}</td>
+                <td>{{line['departure_time']}}</td>
+                <td>{{line['arrival_time']}}</td>
+                <td>{{line['status']}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}	
+
+    <h2 style='margin-bottom: 10px; margin-top: 10px;'>Specify future flight view</h2>
+    <!-- airport specification -->
+    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Specify by airport</h2>
+    <form action="/agent" method="POST">
+        <input type="text" name = "depart_airport" placeholder="Departure Airport" required>
+        <span style = 'padding:10px;'>   </span>
+        <input type="text" name = "arrive_airport" placeholder="Arrival Airport" reuqired></br>
+        <span>Departure Date: </span>
+        <input type="date" name = "depart_date" required><br>
+        <span>Return Date (Optional): </span>	
+        <input type="date" name = "return_date"><br>
+        <input type="submit" value = Search />
+        {% if error1 %}
+            <p class="error"><strong>Error:</strong> {{error1}}</p>
+        {% endif %}
+    </form>
+
+    <!-- city specification -->
+    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Search by city</h2>
+    <form action="/agent" method="POST">
+        <input type="text" name = "depart_city" placeholder="Departure City" reuqired>
+        <span style = 'padding:10px;'>   </span>
+        <input type="text" name = "arrive_city" placeholder="Arrival City" reuqired></br>
+        <span>Departure Date: </span>
+        <input type="date" name = "depart_date" reuqired><br>
+        <span>Return Date (Optional): </span>	
+        <input type="date" name = "return_date"><br>
+        <input type="submit" value = Search />
+        {% if error2 %}
+            <p class="error"><strong>Error:</strong> {{error2}}</p>
+        {% endif %}
+    </form>
+
+    
+
+    <h2>Purchase ticket</h2>
+    <!-- ticket search -->
+    <form action="/agent" method="POST">
+        <input type="text" name = "airline_name" placeholder="Airline Name" required>
+        <span style = 'padding:10px;'>   </span>
+        <input type="text" name = "flight_num" placeholder="Flight Number" required></br>
+        <span>Departure DateTime: </span>
+        <input type="datetime" name = "departure_datetime" required><br>
+        <input type="submit" value = Search />
+        {% if error3 %}
+            <p class="error"><strong>Error:</strong> {{error3}}</p>
+        {% endif %}
+    </form>	
+
+    <!-- desplay ticket search result -->
+    {% if search3 %}
+    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Flight Info{{test}}</h3>
+    <table align= 'center'>
+            <th>Airline Name</th>
+            <th>Flight Number</th>
+            <th>Departure Airport</th>
+            <th>Arrival Airport</th>
+            <th>Departure Time</th>	
+            <th>Arrival Time</th>
+            <th>Status</th>
+            <th>Availability</th>
+            <th>Price</th>
+        
+        {% for line in search3 %}
+            <tr>
+                <td>{{line['airline_name']}}</td>
+                <td>{{line['flight_number']}}</td>
+                <td>{{line['departure_airport']}}</td>
+                <td>{{line['arrival_airport']}}</td>
+                <td>{{line['departure_time']}}</td>
+                <td>{{line['arrival_time']}}</td>
+                <td>{{line['status']}}</td>
+                <td>{{line['availability']}}</td>
+                <td>{{line['price']}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <!-- actual ticket Purchase -->
+    <form action="/agent" method="POST">
+        <input type="email" name = "customer_email" placeholder="Customer Email" required>
+        <input type="text" name = "card_number" placeholder="Card Number" required>
+        <span style = 'padding:10px;'>   </span>
+        <select name="card_type" style='margin-top:10px'>
+			<option value="credit" selected>Credit Card</option>
+			<option value="debit">Debit Card</option>
+		</select><br>
+        <input type="text" name = "name_on_card" placeholder="Name On Card" reuqired></br>
+        <span>Expiration Date: </span>
+        <input type='date' name = 'expiration_date' required>
+        <input type="submit" value = Purchase />
+        {% if error4 %}
+            <p class="error"><strong>Error:</strong> {{error4}}</p>
+        {% endif %}
+    </form>
+    {% endif %}	
+    <!-- purchase confirmation -->
+    {% if purchase_success %}
+        <p ><strong> {{purchase_success}}</strong></p>
+    {% endif %}
+    <!-- purchase error -->
+    {% if purchase_error %}
+        <p ><strong> {{purchase_error}}</strong></p>
+    {% endif %}
+
+</body>
+
+</html>
