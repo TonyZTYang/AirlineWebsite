@@ -1,5 +1,6 @@
 #Import library
 from flask import Flask, render_template, request, session, url_for, redirect,g
+
 from hashlib import md5
 import random
 # import module
@@ -105,10 +106,16 @@ def public_info_search():
 #Define route for login
 @app.route('/login')
 def login():
+	if doorman('Customer'):
+		return redirect(url_for("customer"))
+	if doorman('booking_agent'):
+		return redirect(url_for('agent'))
+	elif doorman('airline_staff'):
+		return redirect(url_for('staff'))
 	return render_template('login.html')
 
 #Authenticates the login
-@app.route('/loginAuth', methods=[ 'POST'])
+@app.route('/loginAuth', methods=['POST'])
 def loginAuth():
 	#grabs information from the forms
 	username = request.form.get('username')
@@ -127,7 +134,8 @@ def loginAuth():
 				error = 'Booking agent id not entered'
 				return render_template('login.html', error=error)
 	else:
-		sql = 'SELECT * FROM ' + usertype + ' WHERE email = %s and password = %s'
+		sql = 'SELECT * FROM ' + usertype + \
+			' WHERE email = %s and password = %s'
 		keys = (username, password)
 	data = fetchone(sql,keys)
 
@@ -199,8 +207,10 @@ def regCustomerAuth():
 			VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
 		keys = (email,name,password,building_num,street,city,state,phone_num,
 		passport_num, passport_expiration, passport_country, dob)
-		modify(sql,keys)
-		return render_template('index.html')
+		if modify(sql,keys):
+			register_success = 'Register succeeded, welcome.'
+			return render_template('index.html',\
+				 register_success = register_success)
 
 @app.route('/regAgentAuth', methods=['POST'])
 def regAgentAuth():
@@ -228,8 +238,10 @@ def regAgentAuth():
 		sql = 'INSERT INTO Booking_agent \
 			VALUES(%s, %s, %s)'
 		keys = (email,password,agent_id)
-		modify(sql,keys)
-		return render_template('index.html')
+		if modify(sql,keys):
+			register_success = 'Register succeeded, welcome.'
+			return render_template('index.html',\
+				 register_success = register_success)
 
 @app.route('/regStaffAuth', methods=['POST'])
 def regStaffAuth():
@@ -263,8 +275,10 @@ def regStaffAuth():
 		sql = 'INSERT INTO airline_staff \
 			VALUES(%s, %s, %s,%s,%s,%s)'
 		keys = (email,password,first_name,last_name,dob,airline_name)
-		modify(sql,keys)
-		return render_template('index.html')
+		if modify(sql,keys):
+			register_success = 'Register succeeded, welcome.'
+			return render_template('index.html',\
+				 register_success = register_success)
 
 @app.route('/customer',methods=['GET','POST'])
 def customer():
@@ -302,7 +316,8 @@ def customer():
 		result = fetchall(sql,keys)
 		if not result:
 			error = 'No outgoing flight exists'
-			return render_template('customer.html', error1=error,name=name, myflight=my_flight)
+			return render_template('customer.html', \
+				error1=error,name=name, myflight=my_flight)
 		if return_date:
 			sql = 'select distinct airline_name,flight_number,departure_time, \
 				arrival_time, departure_airport, arrival_airport, \
@@ -312,7 +327,8 @@ def customer():
 			return_flight = fetchall(sql, keys)
 			return render_template('customer.html',search1=result,
 					search2=return_flight,name=name, myflight=my_flight)
-		return render_template('customer.html',search1=result,name=name, myflight=my_flight)
+		return render_template('customer.html',\
+			search1=result,name=name, myflight=my_flight)
 	elif depart_city:
 		sql = 'select distinct airline_name,flight_number,departure_time , \
 				arrival_time, departure_airport, arrival_airport, \
@@ -324,7 +340,8 @@ def customer():
 		result = fetchall(sql,keys)
 		if not result:
 			error = 'No outgoing flight exists'
-			return render_template('customer.html', error2=error,name=name, myflight=my_flight)
+			return render_template('customer.html', \
+				error2=error,name=name, myflight=my_flight)
 		if return_date:
 			sql = 'select distinct airline_name,flight_number,departure_time, \
 				arrival_time, departure_airport, arrival_airport, \
@@ -336,13 +353,15 @@ def customer():
 			return_flight = fetchall(sql, keys)
 			return render_template('customer.html',search1=result,
 					search2=return_flight,name=name, myflight=my_flight)
-		return render_template('customer.html',name=name, myflight=my_flight,search1=result)
+		return render_template('customer.html',\
+			name=name, myflight=my_flight,search1=result)
 
 	# * purchase tickets
 	airline_name = request.form.get('airline_name')
 	flight_num = request.form.get('flight_num')
 	departure_datetime = request.form.get('departure_datetime')
 
+	# select ticket to purchase
 	if airline_name:
 		sql = 'select * from flight where airline_name = %s and \
 				flight_number = %s and departure_time = %s'
@@ -350,14 +369,18 @@ def customer():
 		result = fetchall(sql,keys)
 		if not result:
 			error = 'No such flight exists'
-			return render_template('customer.html', error3=error,name=name, myflight=my_flight)
+			return render_template('customer.html', \
+				error3=error,name=name, myflight=my_flight)
 
 		#calculate price
-		sql = 'select count(*) as head from ticket where airline_name = %s and flight_number = %s and departure_time = %s'
-		key = (result[0]['airline_name'],result[0]['flight_number'],result[0]['departure_time'])
+		sql = 'select count(*) as head from ticket where airline_name = %s \
+			and flight_number = %s and departure_time = %s'
+		key = (result[0]['airline_name'],result[0]['flight_number'],\
+			result[0]['departure_time'])
 		purchase_count = fetchone(sql,key)
 		purchase_count = purchase_count['head']
-		total_seats = fetchone('select seats from airplane where airplane.id = %s',(result[0]['airplane_id']))['seats']
+		total_seats = fetchone('select seats from airplane where \
+			airplane.id = %s',(result[0]['airplane_id']))['seats']
 		result[0]['availability'] = 'YES'
 		if purchase_count/total_seats == 1:
 			result[0]['availability'] = 'NO'
@@ -368,9 +391,10 @@ def customer():
 		session['flight_number'] = result[0]['flight_number']
 		session['departure_time'] = result[0]['departure_time']
 		session['sold_price'] = result[0]['price']
-		return render_template('customer.html',search3=result,name=name, myflight=my_flight)
+		return render_template('customer.html',\
+			search3=result,name=name, myflight=my_flight)
 
-	
+	#actual purchase	
 	if request.form.get('card_number'):
 		card_number = request.form.get('card_number')
 		card_type = request.form.get('card_type')
@@ -383,14 +407,20 @@ def customer():
 				session['flight_number'], \
 				session['departure_time'],session['airline_name'], \
 					session['username'])
-		modify(sql,key)
+		if modify(sql,key):
+			purchase_success='Purchase succeeded! Thank you for your support.'
+			return render_template('customer.html', name=name,\
+				myflight=my_flight,purchase_success = purchase_success)
+		else:
+			purchase_error = 'Purchase failed. Please try again.'
+			return render_template('customer.html', name=name, \
+				myflight=my_flight, purchase_error= purchase_error)
 
 	return render_template('customer.html', name=name, myflight=my_flight)
 		
 
 
 @app.route('/logout')
-
 def logout():
 	session.pop('username',None)
 	session.pop('usertype', None)
