@@ -13,7 +13,7 @@
 <body>
     <a href='/logout'><p style="text-align:right">Logout</p></a>
     <h1>Welcome, {{name['name']}}</h1>
-
+    {% if not flight_to_comment %}
     <!-- future flights -->
     <h3 style='margin-bottom: 10px; margin-top: 10px;'>My future flights</h3>
     <table align= 'center'>
@@ -49,7 +49,7 @@
         <input type="date" name = "depart_date" required><br>
         <span>Return Date (Optional): </span>	
         <input type="date" name = "return_date"><br>
-        <input type="submit" value = Search />
+        <input type="submit" name='airport_search'value = Search />
         {% if error1 %}
             <p class="error"><strong>Error:</strong> {{error1}}</p>
         {% endif %}
@@ -65,7 +65,7 @@
         <input type="date" name = "depart_date" reuqired><br>
         <span>Return Date (Optional): </span>	
         <input type="date" name = "return_date"><br>
-        <input type="submit" value = Search />
+        <input type="submit" name='city_search' value = Search />
         {% if error2 %}
             <p class="error"><strong>Error:</strong> {{error2}}</p>
         {% endif %}
@@ -129,7 +129,7 @@
         <input type="text" name = "flight_num" placeholder="Flight Number" required></br>
         <span>Departure DateTime: </span>
         <input type="datetime" name = "departure_datetime" required><br>
-        <input type="submit" value = Search />
+        <input type="submit" name='purchase_search' value = Search />
         {% if error3 %}
             <p class="error"><strong>Error:</strong> {{error3}}</p>
         {% endif %}
@@ -174,7 +174,7 @@
         <input type="text" name = "name_on_card" placeholder="Name On Card" reuqired></br>
         <span>Expiration Date: </span>
         <input type='date' name = 'expiration_date' required>
-        <input type="submit" value = Purchase />
+        <input type="submit" name='purchase_submit'value = Purchase />
         {% if error4 %}
             <p class="error"><strong>Error:</strong> {{error4}}</p>
         {% endif %}
@@ -189,6 +189,49 @@
         <p ><strong> {{purchase_error}}</strong></p>
     {% endif %}
 
+    <!-- give comment and rating -->
+    <h2>Give Comment for previous flight</h2>
+    <form action='/customer' method='POST'>
+        <button name='start_comment' type='submit' value='start_comment'>Give Comment</button>
+    </form>
+    {% if comment_status %}
+        <p ><strong> {{comment_status}}</strong></p>
+    {% endif %}
+    {% endif %}
+
+    {% if flight_to_comment %}
+    <h3>Your previous flights</h3>
+    <table align= 'center'>
+            <th>Airline Name</th>
+            <th>Flight Number</th>
+            <th>Departure Airport</th>
+            <th>Arrival Airport</th>
+            <th>Departure Time</th>	
+            <th>Arrival Time</th>
+            <th>Status</th>
+        
+        {% for line in flight_to_comment %}
+            <tr>
+                <td>{{line['airline_name']}}</td>
+                <td>{{line['flight_number']}}</td>
+                <td>{{line['departure_airport']}}</td>
+                <td>{{line['arrival_airport']}}</td>
+                <td>{{line['departure_time']}}</td>
+                <td>{{line['arrival_time']}}</td>
+                <td>{{line['status']}}</td>
+            </tr>
+        {% endfor %}
+    </table><br>
+    <form action='/customer' method='POST'>
+        <input type='text' name='airline_name' placeholder="Airline Name" required>
+        <input type='number' name='flight_number' placeholder="Flight Number" required>
+        <input type='text' name='departure_time' placeholder="Departure Time" required>
+        <input type='number'  name='rating' min='0' max='10' placeholder="5" required><br>
+        <textarea name="comment" style="width:200px; height:200px;" placeholder="Put your comment here" maxlength="144"></textarea><br>
+        <button name='submit_comment' type='submit' value='submit_comment'>Submit Comment</button>
+        <button name='cancel_comment' type='submit' value='cancel_comment'>Go Back</button>
+    </form>
+    {% endif %}
 </body>
 
 </html>

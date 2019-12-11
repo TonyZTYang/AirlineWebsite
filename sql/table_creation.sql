@@ -89,6 +89,7 @@ CREATE TABLE ticket(
 
 CREATE TABLE comment(
 	ticket_id int(255) PRIMARY KEY,
+	rating int(255) NOT NULL,
 	comment varchar (255),
 	FOREIGN KEY (ticket_id) REFERENCES ticket(ticket_id) ON DELETE CASCADE
 );

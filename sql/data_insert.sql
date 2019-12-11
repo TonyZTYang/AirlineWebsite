@@ -22,6 +22,7 @@ insert into airline_staff values
 
 insert into flight values
 (1,'2019-11-5 11:12:12','2019-11-6 10:00:00',125,'on-time','china eastern',12345,'jfk','pvg'),
+(3,'2019-12-20 11:11:11','2019-12-22 11:11:11',150,'delayed','china eastern',12345,'pvg','jfk'),
 (2,'2019-11-11 11:11:11','2019-11-12 11:11:11',150,'delayed','china eastern',67890,'pvg','jfk');
 
 insert into booking_agent values

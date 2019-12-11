@@ -303,16 +303,12 @@ def customer():
 	my_flight = fetchall(sql,key)
 
 	#* flight search
-	depart_airport = request.form.get('depart_airport')
-	arrive_airport = request.form.get('arrive_airport')
-	depart_date = request.form.get('depart_date')
-	return_date = request.form.get('return_date')
-	depart_city = request.form.get('depart_city')
-	arrive_city = request.form.get('arrive_city')
-	
-
 	# check for search scinario
-	if depart_airport:
+	if request.form.get('airport_search'):
+		depart_airport = request.form.get('depart_airport')
+		arrive_airport = request.form.get('arrive_airport')
+		depart_date = request.form.get('depart_date')
+		return_date = request.form.get('return_date')
 		sql = 'select distinct airline_name, flight_number, departure_time , \
 				arrival_time, departure_airport, arrival_airport, \
 				status  from flight where departure_airport = %s and \
@@ -334,7 +330,11 @@ def customer():
 					search2=return_flight,name=name, myflight=my_flight)
 		return render_template('customer.html',\
 			search1=result,name=name, myflight=my_flight)
-	elif depart_city:
+	elif request.form.get('city_search'):
+		depart_city = request.form.get('depart_city')
+		arrive_city = request.form.get('arrive_city')
+		depart_date = request.form.get('depart_date')
+		return_date = request.form.get('return_date')
 		sql = 'select distinct airline_name,flight_number,departure_time , \
 				arrival_time, departure_airport, arrival_airport, \
 				status  from flight where departure_airport = \
@@ -362,13 +362,12 @@ def customer():
 			name=name, myflight=my_flight,search1=result)
 
 	# * purchase tickets
-	airline_name = request.form.get('airline_name')
-	flight_num = request.form.get('flight_num')
-	departure_datetime = request.form.get('departure_datetime')
-
 	# select ticket to purchase
 	# TODO Add buy what you see button
-	if airline_name:
+	if request.form.get('purchase_search'):
+		airline_name = request.form.get('airline_name')
+		flight_num = request.form.get('flight_num')
+		departure_datetime = request.form.get('departure_datetime')
 		sql = 'select * from flight where airline_name = %s and \
 				flight_number = %s and departure_time = %s'
 		keys = (airline_name, flight_num, departure_datetime) 
@@ -401,7 +400,7 @@ def customer():
 			search3=result,name=name, myflight=my_flight)
 
 	#actual purchase	
-	if request.form.get('card_number'):
+	if request.form.get('purchase_submit'):
 		card_number = request.form.get('card_number')
 		card_type = request.form.get('card_type')
 		name_on_card = request.form.get('name_on_card')
@@ -425,6 +424,42 @@ def customer():
 			purchase_error = 'Purchase failed. Please try again.'
 			return render_template('customer.html', name=name, \
 				myflight=my_flight, purchase_error= purchase_error)
+
+	# * give rating and comment
+	if request.form.get('start_comment'):
+		#fetch flight to comment
+		sql = 'SELECT * FROM flight natural join ticket WHERE \
+           	ticket.customer_email = %s and departure_time < now()'
+		key = (username)
+		flight_to_comment = fetchall(sql,key)
+		return render_template('customer.html',\
+			flight_to_comment=flight_to_comment,name=name, myflight=my_flight)
+
+	if request.form.get('submit_comment'):
+		#grab comment content
+		airline_name = request.form.get('airline_name')
+		flight_number = str(request.form.get('flight_number'))
+		departure_datetime = request.form.get('departure_time')
+		rating = str(request.form.get('rating'))
+		comment = request.form.get('comment')
+
+		#fetch ticket id
+		sql = 'select ticket_id from ticket where airline_name = %s and \
+			flight_number = %s and departure_time = %s and customer_email = %s'
+		keys =(airline_name,flight_number,departure_datetime,username)
+		ticket_id = fetchone(sql,keys)['ticket_id']
+
+		#insert the comment
+		sql = 'insert into comment values (%s, %s, %s)'
+		key = (str(ticket_id),rating,comment)
+		if modify(sql,key):
+			comment_status = 'Comment successful, we appreciate your feedback'
+			return render_template('customer.html', \
+				name=name, myflight=my_flight,comment_status=comment_status)
+		else:
+			comment_status = 'Something went wrong, please try again'
+			return render_template('customer.html', \
+				name=name, myflight=my_flight,comment_status=comment_status)
 
 	return render_template('customer.html', name=name, myflight=my_flight)
 
