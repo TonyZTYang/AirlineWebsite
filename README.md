@@ -35,9 +35,9 @@ $ pip3 install -r requirement.txt -U
 - [ ] Track my spending
 - [x] Logout
 ### Booking Agent
-- [ ] View my flights
-- [ ] Search for flights
-- [ ] Purchase tickets
+- [x] View my flights
+- [x] Search for flights
+- [x] Purchase tickets
 - [ ] View my commision
 - [ ] View top customers
 - [x] Logout

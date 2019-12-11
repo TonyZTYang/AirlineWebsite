@@ -147,6 +147,10 @@ def loginAuth():
 		session['usertype'] = usertype
 		if usertype == 'Customer':
 			return redirect(url_for('customer'))
+		elif usertype == 'Booking_agent':
+			return redirect(url_for('agent'))
+		elif usertype == 'airline_staff':
+			return redirect(url_for('staff'))
 		# return redirect(url_for('home'))
 	else:
 		#returns an error message to the html page
@@ -282,6 +286,7 @@ def regStaffAuth():
 
 @app.route('/customer',methods=['GET','POST'])
 def customer():
+
 	if not doorman('Customer'):
 		return render_template('noAuth.html')
 
@@ -362,6 +367,7 @@ def customer():
 	departure_datetime = request.form.get('departure_datetime')
 
 	# select ticket to purchase
+	# TODO Add buy what you see button
 	if airline_name:
 		sql = 'select * from flight where airline_name = %s and \
 				flight_number = %s and departure_time = %s'
@@ -400,6 +406,10 @@ def customer():
 		card_type = request.form.get('card_type')
 		name_on_card = request.form.get('name_on_card')
 		expiration_date = request.form.get('expiration_date')
+		if not card_number.isdigit():
+			purchase_error = 'Please enter only number in the card number box'
+			return render_template('customer.html',name=name, \
+				myflight=my_flight, purchase_error= purchase_error)
 		sql = 'insert into ticket values \
 			(%s,%s,%s,%s,%s,%s, CURDATE(), CURTIME(),%s, %s,%s,%s,NULL)'
 		key = (random.randint(1,255),session['sold_price'],card_type, \
@@ -417,9 +427,167 @@ def customer():
 				myflight=my_flight, purchase_error= purchase_error)
 
 	return render_template('customer.html', name=name, myflight=my_flight)
+
+@app.route('/agent', methods=['GET','POST'])
+def agent():
+
+	if not doorman('Booking_agent'):
+		return render_template('noAuth.html')
+
+	#* get name for welcome message
+	username = session.get('username')
+	
+	#* view my flights
+	sql = 'SELECT * FROM flight natural join ticket WHERE  \
+		ticket.booking_agent_id = (select booking_agent_id from booking_agent\
+			 where email = %s) and departure_time > now()'
+	key = (username)
+	my_flight = fetchall(sql,key)
+
+	#* flight search
+	depart_airport = request.form.get('depart_airport')
+	arrive_airport = request.form.get('arrive_airport')
+	depart_date = request.form.get('depart_date')
+	return_date = request.form.get('return_date')
+	depart_city = request.form.get('depart_city')
+	arrive_city = request.form.get('arrive_city')
+	
+
+	# check for search scinario
+	if depart_airport:
+		sql = 'select distinct airline_name, flight_number, departure_time , \
+				arrival_time, departure_airport, arrival_airport, \
+				status  from flight where departure_airport = %s and \
+				arrival_airport = %s and DATE(departure_time) = %s'
+		keys = (depart_airport, arrive_airport, depart_date) 
+		result = fetchall(sql,keys)
+		if not result:
+			error = 'No outgoing flight exists'
+			return render_template('agent.html', \
+				error1=error,name=username, myflight=my_flight)
+		if return_date:
+			sql = 'select distinct airline_name,flight_number,departure_time, \
+				arrival_time, departure_airport, arrival_airport, \
+				status  from flight where departure_airport = %s and \
+				arrival_airport = %s and DATE(departure_time) = %s'
+			keys = (arrive_airport, depart_airport, return_date)
+			return_flight = fetchall(sql, keys)
+			return render_template('agent.html',search1=result,
+					search2=return_flight,name=username, myflight=my_flight)
+		return render_template('agent.html',\
+			search1=result,name=username, myflight=my_flight)
+	elif depart_city:
+		sql = 'select distinct airline_name,flight_number,departure_time , \
+				arrival_time, departure_airport, arrival_airport, \
+				status  from flight where departure_airport = \
+				(select name from airport where city = %s) and \
+				arrival_airport = (select name from airport where city = %s) \
+				and DATE(departure_time) = %s'
+		keys = (depart_city, arrive_city, depart_date) 
+		result = fetchall(sql,keys)
+		if not result:
+			error = 'No outgoing flight exists'
+			return render_template('agent.html', \
+				error2=error,name=username, myflight=my_flight)
+		if return_date:
+			sql = 'select distinct airline_name,flight_number,departure_time, \
+				arrival_time, departure_airport, arrival_airport, \
+				status  from flight where departure_airport =  \
+				(select name from airport where city = %s) and \
+				arrival_airport = (select name from airport where city = %s) \
+				and DATE(departure_time) = %s'
+			keys = (arrive_city, depart_city, return_date)
+			return_flight = fetchall(sql, keys)
+			return render_template('agent.html',search1=result,
+					search2=return_flight,name=username, myflight=my_flight)
+		return render_template('agent.html',\
+			name=username, myflight=my_flight,search1=result)
+
+	# * purchase tickets
+	airline_name = request.form.get('airline_name')
+	flight_num = request.form.get('flight_num')
+	departure_datetime = request.form.get('departure_datetime')
+
+	# select ticket to purchase
+	# TODO Add buy what you see button
+	if airline_name:
+		sql = 'select * from flight where airline_name = %s and \
+				flight_number = %s and departure_time = %s'
+		keys = (airline_name, flight_num, departure_datetime) 
+		result = fetchall(sql,keys)
+		if not result:
+			error = 'No such flight exists'
+			return render_template('agent.html', \
+				error3=error,name=username, myflight=my_flight)
+
+		#calculate price
+		sql = 'select count(*) as head from ticket where airline_name = %s \
+			and flight_number = %s and departure_time = %s'
+		key = (result[0]['airline_name'],result[0]['flight_number'],\
+			result[0]['departure_time'])
+		purchase_count = fetchone(sql,key)
+		purchase_count = purchase_count['head']
+		total_seats = fetchone('select seats from airplane where \
+			airplane.id = %s',(result[0]['airplane_id']))['seats']
+		result[0]['availability'] = 'YES'
+		if purchase_count/total_seats == 1:
+			result[0]['availability'] = 'NO'
+		elif purchase_count/total_seats >= 0.7:
+			result[0]['price'] = result[0]['price'] * 1.2
+		# gather purchase info
+		session['airline_name'] = result[0]['airline_name']
+		session['flight_number'] = result[0]['flight_number']
+		session['departure_time'] = result[0]['departure_time']
+		session['sold_price'] = result[0]['price']
+		return render_template('agent.html',\
+			search3=result,name=username, myflight=my_flight)
+
+	#actual purchase	
+	if request.form.get('card_number'):
+		#grab purchase info
+		customer_email = request.form.get('customer_email')
+		card_number = request.form.get('card_number')
+		card_type = request.form.get('card_type')
+		name_on_card = request.form.get('name_on_card')
+		expiration_date = request.form.get('expiration_date')
+
+		#verify card number validity
+		if not card_number.isdigit():
+			purchase_error = 'Please enter only number in the card number box'
+			return render_template('agent.html',name=username, \
+				myflight=my_flight, purchase_error= purchase_error)
+
+		#verify customer email validity
+		if not fetchone('select * from customer where email = %s',\
+			(customer_email)):
+			purchase_error = 'Please enter the correct customer email'
+			return render_template('agent.html',name=username, \
+				myflight=my_flight, purchase_error= purchase_error)
+
+		#fetch booking agent id
+		sql = 'select booking_agent_id from booking_agent where email = %s'
+		keys = (username)
+		booking_agent_id = fetchone(sql,keys)['booking_agent_id']
+
+		#make sql insert
+		sql = 'insert into ticket values \
+			(%s,%s,%s,%s,%s,%s, CURDATE(), CURTIME(),%s, %s,%s,%s,%s)'
+		key = (random.randint(1,255),session['sold_price'],card_type, \
+			card_number, name_on_card, expiration_date, \
+				session['flight_number'], \
+				session['departure_time'],session['airline_name'], \
+					customer_email, booking_agent_id)
+		if modify(sql,key):
+			purchase_success='Purchase succeeded! Thank you for your support.'
+			return render_template('agent.html', name=username,\
+				myflight=my_flight,purchase_success = purchase_success)
+		else:
+			purchase_error = 'Purchase failed. Please try again.'
+			return render_template('agent.html', user=username, \
+				myflight=my_flight, purchase_error= purchase_error)
+
+	return render_template('agent.html', name = username, myflight = my_flight)
 		
-
-
 @app.route('/logout')
 def logout():
 	session.pop('username',None)

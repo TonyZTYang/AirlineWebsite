@@ -167,11 +167,14 @@
     <form action="/customer" method="POST">
         <input type="text" name = "card_number" placeholder="Card Number" required>
         <span style = 'padding:10px;'>   </span>
-        <input type="text" name = "card_type" placeholder="Card Type" reuqired></br>
+        <select name="card_type" style='margin-top:10px'>
+			<option value="credit" selected>Credit Card</option>
+			<option value="debit">Debit Card</option>
+		</select><br>
         <input type="text" name = "name_on_card" placeholder="Name On Card" reuqired></br>
         <span>Expiration Date: </span>
         <input type='date' name = 'expiration_date' required>
-        <input type="submit" value = Search />
+        <input type="submit" value = Purchase />
         {% if error4 %}
             <p class="error"><strong>Error:</strong> {{error4}}</p>
         {% endif %}

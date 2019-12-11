@@ -41,10 +41,9 @@ def modify(sql,keys):
             cur = db.cursor()
             cur.execute(sql,keys)
         db.commit()
+        return 1
     except: 
         return 0
-    finally:
-        return 1
 
 #utility function
 def doorman(lock):
