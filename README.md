@@ -42,7 +42,7 @@ $ pip3 install -r requirement.txt -U
 - [ ] View top customers
 - [x] Logout
 ### Airline Staff
-- [ ] View flights
+- [x] View flights
 - [ ] Create new flights
 - [ ] Change status of flights
 - [ ] Add airplane in the system

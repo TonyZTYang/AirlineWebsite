@@ -16,6 +16,7 @@
 
     <!-- future flights -->
     <h3 style='margin-bottom: 10px; margin-top: 10px;'>Future flights</h3>
+    {% if not search1 %}
     <table align= 'center'>
             <th>Airline Name</th>
             <th>Flight Number</th>
@@ -37,10 +38,10 @@
             </tr>
         {% endfor %}
     </table>
+    {% endif %}
 
 	<!-- desplay specification result -->
     {% if search1 %}
-    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Search result</h3>
     <table align= 'center'>
             <th>Airline Name</th>
             <th>Flight Number</th>
@@ -63,59 +64,35 @@
         {% endfor %}
     </table>
     {% endif %}	
-    
-    {% if search2 %}
-    <table align= 'center', style='margin-top:20px'>
-            <th>Airline Name</th>
-            <th>Flight Number</th>
-            <th>Departure Airport</th>
-            <th>Arrival Airport</th>
-            <th>Departure Time</th>	
-            <th>Arrival Time</th>
-            <th>Status</th>
-        
-        {% for line in search2 %}
-            <tr>
-                <td>{{line['airline_name']}}</td>
-                <td>{{line['flight_number']}}</td>
-                <td>{{line['departure_airport']}}</td>
-                <td>{{line['arrival_airport']}}</td>
-                <td>{{line['departure_time']}}</td>
-                <td>{{line['arrival_time']}}</td>
-                <td>{{line['status']}}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    {% endif %}	
 
     <h2 style='margin-bottom: 10px; margin-top: 10px;'>Specify future flight view</h2>
     <!-- airport specification -->
     <h3 style='margin-bottom: 10px; margin-top: 10px;'>Specify by airport</h2>
-    <form action="/agent" method="POST">
+    <form action="/staff" method="POST">
         <input type="text" name = "depart_airport" placeholder="Departure Airport" required>
         <span style = 'padding:10px;'>   </span>
         <input type="text" name = "arrive_airport" placeholder="Arrival Airport" reuqired></br>
-        <span>Departure Date: </span>
-        <input type="date" name = "depart_date" required><br>
-        <span>Return Date (Optional): </span>	
-        <input type="date" name = "return_date"><br>
-        <input type="submit" value = Search />
+        <span>Start Date: </span>
+        <input type="date" name = "start_date" required><br>
+        <span>End Date: </span>	
+        <input type="date" name = "end_date"><br>
+        <input type="submit" name='airport_search' value = Search />
         {% if error1 %}
             <p class="error"><strong>Error:</strong> {{error1}}</p>
         {% endif %}
     </form>
 
     <!-- city specification -->
-    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Search by city</h2>
-    <form action="/agent" method="POST">
+    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Specify by city</h2>
+    <form action="/staff" method="POST">
         <input type="text" name = "depart_city" placeholder="Departure City" reuqired>
         <span style = 'padding:10px;'>   </span>
         <input type="text" name = "arrive_city" placeholder="Arrival City" reuqired></br>
-        <span>Departure Date: </span>
-        <input type="date" name = "depart_date" reuqired><br>
-        <span>Return Date (Optional): </span>	
-        <input type="date" name = "return_date"><br>
-        <input type="submit" value = Search />
+        <span>Start Date: </span>
+        <input type="date" name = "start_date" reuqired><br>
+        <span>End Date (Optional): </span>	
+        <input type="date" name = "end_date"><br>
+        <input type="submit" name='city_search' value = Search />
         {% if error2 %}
             <p class="error"><strong>Error:</strong> {{error2}}</p>
         {% endif %}

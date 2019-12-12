@@ -631,13 +631,56 @@ def staff():
 
 	#* get name for welcome message
 	username = session.get('username')
+
+	#get airline name once and for all
+	sql = 'select airline_name from airline_staff where email = %s'
+	key = (username)
+	airline_name = fetchone(sql,key)['airline_name']
 	
 	#* view my flights
-	sql = 'SELECT * FROM flight WHERE airline_name = (select airline_name \
-		from airline_staff where email = %s) \
+	sql = 'SELECT * FROM flight WHERE airline_name = %s \
 		and departure_time between now() and date_add(now(), interval 30 day)'
-	key = (username)
+	key = (airline_name)
 	my_flight = fetchall(sql,key)
+
+	#* set future flight view
+	# check for search scinario
+	if request.form.get('airport_search'):
+		depart_airport = request.form.get('depart_airport')
+		arrive_airport = request.form.get('arrive_airport')
+		start_date = request.form.get('start_date')
+		end_date = request.form.get('end_date')
+		sql = 'select distinct airline_name, flight_number, departure_time , \
+				arrival_time, departure_airport, arrival_airport, \
+				status  from flight where departure_airport = %s and \
+				arrival_airport= %s and DATE(departure_time) between %s and %s'
+		keys = (depart_airport, arrive_airport, start_date,end_date) 
+		result = fetchall(sql,keys)
+		if not result:
+			error = 'No such flight exists'
+			return render_template('staff.html', \
+				error1=error,name=username, myflight=my_flight)
+		return render_template('staff.html',\
+			search1=result,name=username, myflight=my_flight)
+	elif request.form.get('city_search'):
+		depart_city = request.form.get('depart_city')
+		arrive_city = request.form.get('arrive_city')
+		start_date = request.form.get('start_date')
+		end_date = request.form.get('end_date')
+		sql = 'select distinct airline_name,flight_number,departure_time , \
+				arrival_time, departure_airport, arrival_airport, \
+				status  from flight where departure_airport = \
+				(select name from airport where city = %s) and \
+				arrival_airport = (select name from airport where city = %s) \
+				and DATE(departure_time) between %s and %s'
+		keys = (depart_city, arrive_city, start_date,end_date) 
+		result = fetchall(sql,keys)
+		if not result:
+			error = 'No such flight exists'
+			return render_template('staff.html', \
+				error2=error,name=username, myflight=my_flight)
+		return render_template('staff.html',\
+			name=username, myflight=my_flight,search1=result)
 
 	return render_template('staff.html', name = username, myflight = my_flight)
 
