@@ -697,6 +697,53 @@ def staff():
 				error3=error,name=username, myflight=my_flight)
 		return render_template('staff.html',\
 			name=username, myflight=my_flight,search3=result)
+
+	# create new flight
+	if request.form.get('create_flight_submit'):
+		flight_num = str(request.form.get('flight_num'))
+		airplane_id = str(request.form.get('airplane_id'))
+		depart_airport = request.form.get('depart_airport')
+		arrive_airport = request.form.get('arrive_airport')
+		price = str(request.form.get('price'))
+		status = request.form.get('status')
+		depart_datetime = request.form.get('depart_datetime')
+		arrive_datetime = request.form.get('arrive_datetime')
+
+		#validate info
+		if fetchone('select * from flight where flight_number = %s',\
+			(flight_num)):
+			status = 'flight number already exists,try again'
+			return render_template('staff.html', \
+				name = username, myflight = my_flight, \
+				create_flight_status=status)
+		if not fetchone('select * from airplane where id = %s',\
+			(airplane_id)):
+			status = 'no such airplane exists,try again'
+			return render_template('staff.html', \
+				name = username, myflight = my_flight, \
+				create_flight_status=status)
+		if not fetchone('select * from airport where %s in \
+			(select name from airport) and %s in (select name from airport)',\
+			(depart_airport,arrive_airport)):
+			status = 'airport not correct,try again'
+			return render_template('staff.html', \
+				name = username, myflight = my_flight, \
+				create_flight_status=status)
+		
+		sql = 'insert into flight values (%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+		keys = (flight_num,depart_datetime,arrive_datetime,price, \
+			status,airline_name,airplane_id,depart_airport,arrive_airport)
+		if modify(sql,keys):
+			status = 'Creation success'
+			return render_template('staff.html', \
+				name = username, myflight = my_flight, \
+				create_flight_status=status)
+		else:
+			status = 'Creation failed, try again'
+			return render_template('staff.html', \
+				name = username, myflight = my_flight, \
+				create_flight_status=status)
+			
 	return render_template('staff.html', name = username, myflight = my_flight)
 
 @app.route('/logout')

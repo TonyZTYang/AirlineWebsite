@@ -119,7 +119,6 @@
             <th>Address</th>
             <th>Phone Number</th>
             <th>Passport Number</th>	
-            <th>Passport Expiration</th>
             <th>Passport Country</th> 
             <th>Date of birth</th>
         
@@ -130,7 +129,6 @@
                 <td>No. {{line['building_num']}}, {{line['street']}}, {{line['city']}}, {{line['state']}}</td>
                 <td>{{line['phone_num']}}</td>
                 <td>{{line['passport_num']}}</td>
-                <td>{{line['passport_expiration']}}</td>
                 <td>{{line['passport_country']}}</td>
                 <td>{{line['date_of_birth']}}</td>
             </tr>
@@ -141,14 +139,25 @@
     <h2>Create New Flight</h2>
     <!-- ticket search -->
     <form action="/staff" method="POST">
-        <input type="text" name = "airline_name" placeholder="Airline Name" required>
+        <input type="number" name = "flight_num" placeholder="Flight Number" required>
         <span style = 'padding:10px;'>   </span>
-        <input type="text" name = "flight_num" placeholder="Flight Number" required></br>
+        <input type="number" name = "airplane_id" placeholder="Airplane Id" required></br>
+        <input type="text" name = "depart_airport" placeholder="Departure Airport" required>
+        <span style = 'padding:10px;'>   </span>
+        <input type="text" name = "arrive_airport" placeholder="Arrival Airport" required></br>
+        <input type="number" name = "price" placeholder="Price" required>
+        <span style = 'padding:10px;'>   </span>
+        <select name="status" style='margin-top:10px'>
+                <option value="on-time" selected>On-time</option>
+                <option value="delayed">Delayed</option>
+            </select><br></br>
         <span>Departure DateTime: </span>
-        <input type="datetime" name = "departure_datetime" required><br>
-        <input type="submit" value = Search />
-        {% if error3 %}
-            <p class="error"><strong>Error:</strong> {{error3}}</p>
+        <input type="datetime" name = "depart_datetime" required><br>
+        <span>Arrival DateTime: </span>
+        <input type="datetime" name = "arrive_datetime" required><br>
+        <input type="submit" name='create_flight_submit' value = Search />
+        {% if create_flight_status %}
+            <p class="error"><strong>{{create_flight_status}}</strong></p>
         {% endif %}
     </form>	
 
