@@ -152,52 +152,7 @@
         {% endif %}
     </form>	
 
-    <!-- desplay ticket search result -->
-    {% if search3 %}
-    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Flight Info{{test}}</h3>
-    <table align= 'center'>
-            <th>Airline Name</th>
-            <th>Flight Number</th>
-            <th>Departure Airport</th>
-            <th>Arrival Airport</th>
-            <th>Departure Time</th>	
-            <th>Arrival Time</th>
-            <th>Status</th>
-            <th>Availability</th>
-            <th>Price</th>
-        
-        {% for line in search3 %}
-            <tr>
-                <td>{{line['airline_name']}}</td>
-                <td>{{line['flight_number']}}</td>
-                <td>{{line['departure_airport']}}</td>
-                <td>{{line['arrival_airport']}}</td>
-                <td>{{line['departure_time']}}</td>
-                <td>{{line['arrival_time']}}</td>
-                <td>{{line['status']}}</td>
-                <td>{{line['availability']}}</td>
-                <td>{{line['price']}}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    <!-- actual ticket Purchase -->
-    <form action="/agent" method="POST">
-        <input type="email" name = "customer_email" placeholder="Customer Email" required>
-        <input type="text" name = "card_number" placeholder="Card Number" required>
-        <span style = 'padding:10px;'>   </span>
-        <select name="card_type" style='margin-top:10px'>
-			<option value="credit" selected>Credit Card</option>
-			<option value="debit">Debit Card</option>
-		</select><br>
-        <input type="text" name = "name_on_card" placeholder="Name On Card" reuqired></br>
-        <span>Expiration Date: </span>
-        <input type='date' name = 'expiration_date' required>
-        <input type="submit" value = Purchase />
-        {% if error4 %}
-            <p class="error"><strong>Error:</strong> {{error4}}</p>
-        {% endif %}
-    </form>
-    {% endif %}	
+   
     <!-- purchase confirmation -->
     {% if purchase_success %}
         <p ><strong> {{purchase_success}}</strong></p>
