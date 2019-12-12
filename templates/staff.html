@@ -15,7 +15,7 @@
     <h1>Welcome, {{name}}</h1>
 
     <!-- future flights -->
-    <h3 style='margin-bottom: 10px; margin-top: 10px;'>Future flights</h3>
+    <h2 style='margin-bottom: 10px; margin-top: 10px;'>Future flights</h2>
     {% if not search1 %}
     <table align= 'center'>
             <th>Airline Name</th>
@@ -98,11 +98,49 @@
         {% endif %}
     </form>
 
-    
+    <!-- view customer by flight -->
+    <h3 style='margin-bottom: 10px; margin-top: 10px;'>View customer by flight</h2>
+    <form action="/staff" method="POST">
+        <input type="text" name = "flight_num" placeholder="Flight Number" required></br>
+        <span>Departure Datetime: </span>
+        <input type="text" name = "depart_datetime" required><br>
+        <input type="submit" name='customer_search' value = Search />
+        {% if error3 %}
+            <p class="error"><strong>Error:</strong> {{error3}}</p>
+        {% endif %}
+    </form>	
 
-    <h2>Purchase ticket</h2>
+    <!-- customer search result -->
+    {% if search3 %}
+    <h3>Customer by flight result</h3>
+    <table align= 'center'>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+            <th>Passport Number</th>	
+            <th>Passport Expiration</th>
+            <th>Passport Country</th> 
+            <th>Date of birth</th>
+        
+        {% for line in search3 %}
+            <tr>
+                <td>{{line['email']}}</td>
+                <td>{{line['name']}}</td>
+                <td>No. {{line['building_num']}}, {{line['street']}}, {{line['city']}}, {{line['state']}}</td>
+                <td>{{line['phone_num']}}</td>
+                <td>{{line['passport_num']}}</td>
+                <td>{{line['passport_expiration']}}</td>
+                <td>{{line['passport_country']}}</td>
+                <td>{{line['date_of_birth']}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}	
+
+    <h2>Create New Flight</h2>
     <!-- ticket search -->
-    <form action="/agent" method="POST">
+    <form action="/staff" method="POST">
         <input type="text" name = "airline_name" placeholder="Airline Name" required>
         <span style = 'padding:10px;'>   </span>
         <input type="text" name = "flight_num" placeholder="Flight Number" required></br>

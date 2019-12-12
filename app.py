@@ -682,6 +682,21 @@ def staff():
 		return render_template('staff.html',\
 			name=username, myflight=my_flight,search1=result)
 
+	#* view customer by flight
+	if request.form.get('customer_search'):
+		flight_num = str(request.form.get('flight_num'))
+		departure_datetime = request.form.get('depart_datetime')
+		sql = 'select * from customer where email in (select distinct\
+			customer_email from ticket where airline_name = %s and \
+			flight_number = %s and departure_time = %s)'
+		keys = (airline_name,flight_num,departure_datetime)
+		result = fetchall(sql,keys)
+		if not result:
+			error = 'No such customer exists'
+			return render_template('staff.html', \
+				error3=error,name=username, myflight=my_flight)
+		return render_template('staff.html',\
+			name=username, myflight=my_flight,search3=result)
 	return render_template('staff.html', name = username, myflight = my_flight)
 
 @app.route('/logout')
