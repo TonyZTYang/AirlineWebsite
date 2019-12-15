@@ -718,7 +718,6 @@ def staff():
 
 	# * create new flight
 	if request.form.get('create_flight_submit'):
-		flight_num = str(request.form.get('flight_num'))
 		airplane_id = str(request.form.get('airplane_id'))
 		depart_airport = request.form.get('depart_airport')
 		arrive_airport = request.form.get('arrive_airport')
@@ -728,12 +727,6 @@ def staff():
 		arrive_datetime = request.form.get('arrive_datetime')
 
 		#validate info
-		if fetchone('select * from flight where flight_number = %s',\
-			(flight_num)):
-			status = 'flight number already exists,try again'
-			return render_template('staff.html', \
-				name = username, myflight = my_flight, \
-				create_flight_status=status)
 		if not fetchone('select * from airplane where id = %s',\
 			(airplane_id)):
 			status = 'no such airplane exists,try again'
@@ -747,7 +740,11 @@ def staff():
 			return render_template('staff.html', \
 				name = username, myflight = my_flight, \
 				create_flight_status=status)
-		
+		#get flight number
+		sql = 'select max(flight_number) as max_num from flight\
+			 where airline_name = %s'
+		keys = (airline_name)
+		flight_num = str(fetchone(sql,keys)['max_num'] + 1)
 		sql = 'insert into flight values (%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 		keys = (flight_num,depart_datetime,arrive_datetime,price, \
 			status,airline_name,airplane_id,depart_airport,arrive_airport)
