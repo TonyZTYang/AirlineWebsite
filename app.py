@@ -788,6 +788,30 @@ def staff():
 			change_status = 'Something went wrong, please try again'
 			return render_template('staff.html', name = username, \
 				myflight = my_flight, change_status = change_status)
+	
+	#* add airplane
+	if request.form.get('add_airplane'):
+		seats =  str(request.form.get('seats'))
+		#get the last airplane id
+		sql = 'select max(id) as id_max from airplane where airline_name = %s '
+		keys = (airline_name)
+		max_id = fetchall(sql,keys)[0]['id_max']
+		airplane_id = max_id + 1
+		sql = 'insert into airplane values (%s, %s, %s)'
+		keys = (str(airplane_id), seats, airline_name)
+		if modify(sql,keys):
+			add_airplane_status = 'Airplane add success'
+			result = fetchall('select * from airplane where airline_name = %s'\
+				, airline_name)
+			return render_template('staff.html', name = username, \
+				myflight = my_flight, add_airplane_status = \
+					add_airplane_status, add_airplane = result)
+		else:
+			add_airplane_status = 'Something went wrong, please try again'
+			return render_template('staff.html', name = username, \
+				myflight = my_flight, add_airplane_status = \
+					add_airplane_status)
+	
 	return render_template('staff.html', name = username, myflight = my_flight)
 
 @app.route('/logout')

@@ -43,8 +43,8 @@ $ pip3 install -r requirement.txt -U
 ### Airline Staff
 - [x] View flights
 - [x] Create new flights
-- [ ] Change status of flights
-- [ ] Add airplane in the system
+- [x] Change status of flights
+- [x] Add airplane in the system
 - [ ] Add new airport in the system
 - [ ] View flight ratings
 - [ ] View all the booking agents

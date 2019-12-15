@@ -177,6 +177,30 @@
         {% endif %}
     </form>
 
+    <!-- add airplane  -->
+   <h3 style='margin-bottom: 10px; margin-top: 10px;'>Add airplane</h2>
+    <form action="/staff" method="POST">
+        <input type="number" name = "seats" placeholder="Seats" required></br>
+        <input type="submit" name='add_airplane' value = Add />
+        {% if add_airplane_status %}
+            <p class="error"><strong>{{add_airplane_status}}</strong></p>
+        {% endif %}
+    </form>
+
+    <!-- add airplane result -->
+    {% if add_airplane %}
+    <h3>All planes owned by your airline</h3>
+    <table align= 'center'>
+            <th>ID</th>
+            <th>Seats</th>
+        {% for line in add_airplane %}
+            <tr>
+                <td>{{line['id']}}</td>
+                <td>{{line['seats']}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}	
 </body>
 
 </html>
