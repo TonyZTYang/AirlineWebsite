@@ -1,7 +1,6 @@
 # Air Ticket Reservation System 
-A database system for a hypothetic airline company as the final project for CSCI-SHU 213 Databases.
-* Frontend: Vue + Axios
-* Backend: Flask + Mysql
+A python database system for a hypothetic airline company as the final project for CSCI-SHU 213 Databases.
+
 
 ## Installation
 1. Download the whole project.
@@ -38,7 +37,7 @@ $ pip3 install -r requirement.txt -U
 - [x] View my flights
 - [x] Search for flights
 - [x] Purchase tickets
-- [ ] View my commision
+- [ ] View my commission
 - [ ] View top customers
 - [x] Logout
 ### Airline Staff
@@ -58,7 +57,7 @@ $ pip3 install -r requirement.txt -U
 - [x] Prevention of http attacks
 - [x] Sessions for each user and authentications each step after login
 - [x] Prepared statements
-- [ ] Prevent cross-site scripting
+- [x] Prevent cross-site scripting
 
 ## Documentation
 For full documentation (ER diagram, relational diagram and all use cases), look under [documentation folder](/documentation).

@@ -155,21 +155,27 @@
         <input type="datetime" name = "depart_datetime" required><br>
         <span>Arrival DateTime: </span>
         <input type="datetime" name = "arrive_datetime" required><br>
-        <input type="submit" name='create_flight_submit' value = Search />
+        <input type="submit" name='create_flight_submit' value = Create />
         {% if create_flight_status %}
             <p class="error"><strong>{{create_flight_status}}</strong></p>
         {% endif %}
     </form>	
 
-   
-    <!-- purchase confirmation -->
-    {% if purchase_success %}
-        <p ><strong> {{purchase_success}}</strong></p>
-    {% endif %}
-    <!-- purchase error -->
-    {% if purchase_error %}
-        <p ><strong> {{purchase_error}}</strong></p>
-    {% endif %}
+   <!-- change flight status  -->
+   <!-- <h3 style='margin-bottom: 10px; margin-top: 10px;'>Change flight status</h2>
+    <form action="/staff" method="POST">
+        <input type="text" name = "flight_num" placeholder="Flight Number" required></br>
+        <span>Departure Datetime: </span>
+        <input type="text" name = "depart_datetime" required><br>
+        <select name="status" style='margin-top:10px'>
+                <option value="on-time" selected>On-time</option>
+                <option value="delayed">Delayed</option>
+            </select><br></br>
+        <input type="submit" name='change_status' value = Create />
+        {% if change_status %}
+            <p class="error"><strong>{{change_status}}</strong></p>
+        {% endif %}
+    </form>	 -->
 
 </body>
 

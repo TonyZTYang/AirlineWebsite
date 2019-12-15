@@ -46,12 +46,14 @@ def public_info_search():
 
 	# check for search scinario
 	if depart_airport:
+		#fetch search result
 		sql = 'select distinct airline_name, flight_number, departure_time , \
 				arrival_time, departure_airport, arrival_airport, \
 				status  from flight where departure_airport = %s and \
 				arrival_airport = %s and DATE(departure_time) = %s'
 		keys = (depart_airport, arrive_airport, depart_date) 
 		result = fetchall(sql,keys)
+		# case handling
 		if not result:
 			error = 'No outgoing flight exists'
 			return render_template('index.html', error1=error)
@@ -124,6 +126,7 @@ def loginAuth():
 	agent_id = request.form.get('agent_id')
 
 	# execute sql to check for authenticity
+	#booking agent listed alone
 	if usertype == 'Booking_agent':
 			if agent_id:
 				sql = 'SELECT * FROM ' + usertype + ' WHERE email = %s \
@@ -388,8 +391,10 @@ def customer():
 		total_seats = fetchone('select seats from airplane where \
 			airplane.id = %s',(result[0]['airplane_id']))['seats']
 		result[0]['availability'] = 'YES'
+		session['availability'] = 'YES'
 		if purchase_count/total_seats == 1:
 			result[0]['availability'] = 'NO'
+			session['availability'] = 'NO'
 		elif purchase_count/total_seats >= 0.7:
 			result[0]['price'] = result[0]['price'] * 1.2
 		# gather purchase info
@@ -408,6 +413,10 @@ def customer():
 		expiration_date = request.form.get('expiration_date')
 		if not card_number.isdigit():
 			purchase_error = 'Please enter only number in the card number box'
+			return render_template('customer.html',name=name, \
+				myflight=my_flight, purchase_error= purchase_error)
+		if session['availability'] == 'NO':
+			purchase_error = 'Flight not available, sorry.'
 			return render_template('customer.html',name=name, \
 				myflight=my_flight, purchase_error= purchase_error)
 		sql = 'insert into ticket values \
@@ -540,12 +549,13 @@ def agent():
 			name=username, myflight=my_flight,search1=result)
 
 	# * purchase tickets
+	# todo purchase 
 	airline_name = request.form.get('airline_name')
 	flight_num = request.form.get('flight_num')
 	departure_datetime = request.form.get('departure_datetime')
 
 	# select ticket to purchase
-	# TODO Add buy what you see button
+	# TODO Add buy what you see buttonreturn
 	if airline_name:
 		sql = 'select * from flight where airline_name = %s and \
 				flight_number = %s and departure_time = %s'
@@ -566,8 +576,10 @@ def agent():
 		total_seats = fetchone('select seats from airplane where \
 			airplane.id = %s',(result[0]['airplane_id']))['seats']
 		result[0]['availability'] = 'YES'
+		session['availability'] = 'YES'
 		if purchase_count/total_seats == 1:
 			result[0]['availability'] = 'NO'
+			session['availability'] = 'NO'
 		elif purchase_count/total_seats >= 0.7:
 			result[0]['price'] = result[0]['price'] * 1.2
 		# gather purchase info
@@ -597,6 +609,12 @@ def agent():
 		if not fetchone('select * from customer where email = %s',\
 			(customer_email)):
 			purchase_error = 'Please enter the correct customer email'
+			return render_template('agent.html',name=username, \
+				myflight=my_flight, purchase_error= purchase_error)
+
+		#check flight availability
+		if session['availability'] == 'NO':
+			purchase_error = 'Flight not available, sorry.'
 			return render_template('agent.html',name=username, \
 				myflight=my_flight, purchase_error= purchase_error)
 
@@ -698,7 +716,7 @@ def staff():
 		return render_template('staff.html',\
 			name=username, myflight=my_flight,search3=result)
 
-	# create new flight
+	# * create new flight
 	if request.form.get('create_flight_submit'):
 		flight_num = str(request.form.get('flight_num'))
 		airplane_id = str(request.form.get('airplane_id'))
@@ -743,7 +761,7 @@ def staff():
 			return render_template('staff.html', \
 				name = username, myflight = my_flight, \
 				create_flight_status=status)
-			
+
 	return render_template('staff.html', name = username, myflight = my_flight)
 
 @app.route('/logout')
