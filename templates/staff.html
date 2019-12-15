@@ -200,6 +200,18 @@
         {% endfor %}
     </table>
     {% endif %}	
+
+    <!-- add airport  -->
+   <h3 style='margin-bottom: 10px; margin-top: 10px;'>Add airport</h2>
+    <form action="/staff" method="POST">
+        <input type="text" name = "airport_name" placeholder="Airport Name" required>
+        <span style = 'padding:10px;'>   </span>
+        <input type="text" name = "airport_city" placeholder="Airport City" required></br>
+        <input type="submit" name='add_airport' value = Add />
+        {% if add_airport_status %}
+            <p class="error"><strong>{{add_airport_status}}</strong></p>
+        {% endif %}
+    </form>
 </body>
 
 </html>

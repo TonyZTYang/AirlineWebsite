@@ -809,6 +809,31 @@ def staff():
 				myflight = my_flight, add_airplane_status = \
 					add_airplane_status)
 	
+	#* add airport
+	if request.form.get('add_airport'):
+		airport_name =  request.form.get('airport_name')
+		airport_city =  request.form.get('airport_city')
+		# validate airport name
+		sql = 'select * from airport where name = %s '
+		keys = (airport_name)
+		if fetchone(sql,keys):
+			add_airport_status = 'Airport already exists, try again'
+			return render_template('staff.html', name = username, \
+				myflight = my_flight, add_airport_status = \
+					add_airport_status)
+		sql = 'insert into airport values (%s, %s)'
+		keys = (airport_name, airport_city)
+		if modify(sql,keys):
+			add_airport_status = 'Airport add success'
+			return render_template('staff.html', name = username, \
+				myflight = my_flight, add_airport_status = \
+					add_airport_status)
+		else:
+			add_airport_status = 'Something went wrong, please try again'
+			return render_template('staff.html', name = username, \
+				myflight = my_flight, add_airport_status = \
+					add_airport_status)
+	
 	return render_template('staff.html', name = username, myflight = my_flight)
 
 @app.route('/logout')
