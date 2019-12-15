@@ -162,20 +162,20 @@
     </form>	
 
    <!-- change flight status  -->
-   <!-- <h3 style='margin-bottom: 10px; margin-top: 10px;'>Change flight status</h2>
+   <h3 style='margin-bottom: 10px; margin-top: 10px;'>Change flight status</h2>
     <form action="/staff" method="POST">
-        <input type="text" name = "flight_num" placeholder="Flight Number" required></br>
+        <input type="number" name = "flight_num" placeholder="Flight Number" required></br>
         <span>Departure Datetime: </span>
         <input type="text" name = "depart_datetime" required><br>
         <select name="status" style='margin-top:10px'>
                 <option value="on-time" selected>On-time</option>
                 <option value="delayed">Delayed</option>
             </select><br></br>
-        <input type="submit" name='change_status' value = Create />
+        <input type="submit" name='change_status' value = Change />
         {% if change_status %}
             <p class="error"><strong>{{change_status}}</strong></p>
         {% endif %}
-    </form>	 -->
+    </form>
 
 </body>
 

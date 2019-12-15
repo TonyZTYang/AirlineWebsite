@@ -762,6 +762,32 @@ def staff():
 				name = username, myflight = my_flight, \
 				create_flight_status=status)
 
+	# * change flight status
+	if request.form.get('change_status'):
+		flight_num =  str(request.form.get('flight_num'))
+		depart_datetime =  request.form.get('depart_datetime')
+		status = request.form.get('status')
+
+		#check flight validity
+		sql = 'select * from flight where flight_number = %s and \
+			departure_time = %s and airline_name = %s'
+		keys = (flight_num,depart_datetime, airline_name)
+		if not fetchone(sql,keys):
+			change_status = 'Flight not exists, please try again'
+			return render_template('staff.html', name = username, \
+				myflight = my_flight, change_status = change_status)
+		#make sql op
+		sql = 'update flight set status = %s where flight_number = %s and \
+			departure_time = %s and airline_name = %s'
+		keys = (status, flight_num, depart_datetime, airline_name)
+		if modify(sql,keys):
+			change_status = 'Status change success'
+			return render_template('staff.html', name = username, \
+				myflight = my_flight, change_status = change_status)
+		else:
+			change_status = 'Something went wrong, please try again'
+			return render_template('staff.html', name = username, \
+				myflight = my_flight, change_status = change_status)
 	return render_template('staff.html', name = username, myflight = my_flight)
 
 @app.route('/logout')
