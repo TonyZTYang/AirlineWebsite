@@ -99,7 +99,7 @@
     </form>
 
     <!-- view customer by flight -->
-    <h3 style='margin-bottom: 10px; margin-top: 10px;'>View customer by flight</h2>
+    <h2 style='margin-bottom: 10px; margin-top: 10px;'>View customer by flight</h2>
     <form action="/staff" method="POST">
         <input type="text" name = "flight_num" placeholder="Flight Number" required></br>
         <span>Departure Datetime: </span>
@@ -161,7 +161,7 @@
     </form>	
 
    <!-- change flight status  -->
-   <h3 style='margin-bottom: 10px; margin-top: 10px;'>Change flight status</h2>
+   <h2 style='margin-bottom: 10px; margin-top: 10px;'>Change flight status</h2>
     <form action="/staff" method="POST">
         <input type="number" name = "flight_num" placeholder="Flight Number" required></br>
         <span>Departure Datetime: </span>
@@ -177,7 +177,7 @@
     </form>
 
     <!-- add airplane  -->
-   <h3 style='margin-bottom: 10px; margin-top: 10px;'>Add airplane</h2>
+   <h2 style='margin-bottom: 10px; margin-top: 10px;'>Add airplane</h2>
     <form action="/staff" method="POST">
         <input type="number" name = "seats" placeholder="Seats" required></br>
         <input type="submit" name='add_airplane' value = Add />
@@ -202,7 +202,7 @@
     {% endif %}	
 
     <!-- add airport  -->
-   <h3 style='margin-bottom: 10px; margin-top: 10px;'>Add airport</h2>
+   <h2 style='margin-bottom: 10px; margin-top: 10px;'>Add airport</h2>
     <form action="/staff" method="POST">
         <input type="text" name = "airport_name" placeholder="Airport Name" required>
         <span style = 'padding:10px;'>   </span>
@@ -212,6 +212,62 @@
             <p class="error"><strong>{{add_airport_status}}</strong></p>
         {% endif %}
     </form>
+
+    <!-- view ratings by flight -->
+    <h2 style='margin-bottom: 10px; margin-top: 10px;'>View ratings by flight</h2>
+    <form action="/staff" method="POST">
+        <input type="number" name = "flight_num" placeholder="Flight Number" required></br>
+        <span>Departure Datetime: </span>
+        <input type="text" name = "depart_datetime" required><br>
+        <input type="submit" name='cus_rating' value = Search />
+        {% if cus_rating_error %}
+            <p class="error"><strong>Error:</strong> {{cus_rating_error}}</p>
+        {% endif %}
+    </form>	
+
+    <!-- rating by flight result -->
+    {% if cus_rating %}
+    <h3>Ratings by flight result: {{ cus_rating[-1]}}</h3>
+    <table align= 'center'>
+            <th>Customer Email</th>
+            <th>Rating</th>
+            <th>Comment</th>
+        {% for line in cus_rating[0:-1] %}
+            <tr>
+                <td>{{line['customer_email']}}</td>
+                <td>{{line['rating']}}</td>
+                <td>{{line['comment']}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}	
+
+    <!-- all phone numbers -->
+    <!-- {% if not phone_num %}
+    <h2 style='margin-bottom: 10px; margin-top: 10px;'>Your phone numbers</h2>
+    <table align= 'center'>
+            <th>Phone Number</th>
+        {% for line in phone_num %}
+            <tr>
+                <td>{{line['phone_number']}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %} -->
+
+    <!-- change phone number  -->
+   <!-- <h2 style='margin-bottom: 10px; margin-top: 10px;'>Change phone number</h2>
+   <form action="/staff" method="POST">
+       <input type="number" name = "phone_num" placeholder="Phone Number" required></br>
+       <select name="option" style='margin-top:10px'>
+               <option value="add" selected>On-time</option>
+               <option value="delete">Delayed</option>
+           </select><br></br>
+       <input type="submit" name='change_phone_num' value = Change />
+       {% if change_phone_num_status %}
+           <p class="error"><strong>{{change_phone_num_status}}</strong></p>
+       {% endif %}
+   </form> -->
 </body>
 
 </html>

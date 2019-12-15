@@ -833,6 +833,26 @@ def staff():
 			return render_template('staff.html', name = username, \
 				myflight = my_flight, add_airport_status = \
 					add_airport_status)
+	#* view ratings by flight
+	if request.form.get('cus_rating'):
+		flight_num = str(request.form.get('flight_num'))
+		departure_datetime = request.form.get('depart_datetime')
+		sql = 'select * from comment natural join ticket where \
+			airline_name = %s and flight_number = %s and departure_time = %s'
+		keys = (airline_name,flight_num,departure_datetime)
+		result = fetchall(sql,keys)
+		if not result:
+			error = 'No comment exists'
+			return render_template('staff.html', \
+				cus_rating_error = error,name=username, myflight=my_flight)
+		# get average rating
+		avg = 0
+		for line in result:
+			avg += line['rating']
+		avg = avg/len(result)
+		result.append(avg)
+		return render_template('staff.html',\
+			name=username, myflight=my_flight,cus_rating=result)
 	
 	return render_template('staff.html', name = username, myflight = my_flight)
 
