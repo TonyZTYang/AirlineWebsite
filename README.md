@@ -47,7 +47,7 @@ $ pip3 install -r requirement.txt -U
 - [x] Add airplane in the system
 - [x] Add new airport in the system
 - [x] View flight ratings
-- [ ] Add/delete phone number
+- [x] Add/delete phone number
 - [ ] View all the booking agents
 - [ ] View frequent customers
 - [ ] View reports

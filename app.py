@@ -853,6 +853,60 @@ def staff():
 		result.append(avg)
 		return render_template('staff.html',\
 			name=username, myflight=my_flight,cus_rating=result)
+	#* view customer by flight
+	if request.form.get('change_phone_num'):
+		phone_num = str(request.form.get('phone_num'))
+		option = request.form.get('option')
+		if option == 'add':
+			# verify if the number exists
+			sql = 'select phone_number from phone_num where owner = %s and \
+				phone_number = %s'
+			keys = (username,phone_num)
+			result = fetchall(sql,keys)
+			if result:
+				error = 'The number already exists'
+				return render_template('staff.html', myflight = my_flight, \
+					name=username, change_phone_num_status=error)
+			sql = 'insert into phone_num values (%s, %s)'
+			keys = (phone_num,username)
+			if modify(sql,keys):
+				sql = 'select phone_number from phone_num where owner = %s'
+				key = (username)
+				all_num = fetchall(sql,key)
+				status = 'Phone number add success'
+				return render_template('staff.html', name = username, \
+					myflight = my_flight, change_phone_num_status = \
+						status, phone_num = all_num)
+			else:
+				status = 'Something went wrong, please try again'
+				return render_template('staff.html', name = username, \
+					myflight = my_flight, change_phone_num_status = \
+						status)
+		elif option == 'delete':
+			# verify if the number exists
+			sql = 'select phone_number from phone_num where owner = %s and \
+				phone_number = %s'
+			keys = (username,phone_num)
+			result = fetchall(sql,keys)
+			if not result:
+				error = 'The number does not exist'
+				return render_template('staff.html', myflight = my_flight, \
+					name=username, change_phone_num_status=error)
+			sql ='delete from phone_num where owner = %s and phone_number = %s'
+			key = (username,phone_num)
+			if modify(sql,keys):
+				sql = 'select phone_number from phone_num where owner = %s'
+				key = (username)
+				all_num = fetchall(sql,key)
+				status = 'Phone number delete success'
+				return render_template('staff.html', name = username, \
+					myflight = my_flight, change_phone_num_status = \
+						status, phone_num = all_num)
+			else:
+				status = 'Something went wrong, please try again'
+				return render_template('staff.html', name = username, \
+					myflight = my_flight, change_phone_num_status = \
+						status)
 	
 	return render_template('staff.html', name = username, myflight = my_flight)
 
