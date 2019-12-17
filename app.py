@@ -689,7 +689,7 @@ def agent():
 		#fetch booking agent id
 		sql = 'select booking_agent_id from booking_agent where email = %s'
 		keys = (username)
-		booking_agent_id = fetchone(sql,keys)['booking_agent_id']
+		booking_agent_id = str(fetchone(sql,keys)['booking_agent_id'])
 		# get data
 		sql = 'select sum(sold_price * 0.1) as total, count(*) as sales from \
 			ticket where booking_agent_id = %s and purchase_date between \
@@ -724,6 +724,37 @@ def agent():
 		result['average'] = result['total'] / result['sales']
 		return render_template('agent.html', name = username,\
 				 myflight = my_flight, view_commission = result)
+
+	# * view top customers
+	if request.form.get('top_customer_submit'):
+		#fetch booking agent id
+		sql = 'select booking_agent_id from booking_agent where email = %s'
+		keys = (username)
+		booking_agent_id = str(fetchone(sql,keys)['booking_agent_id'])
+		# case handling
+		option = request.form.get('option')
+		if option == 'sales':
+			sql = 'select customer_email, count(*) as fac from ticket where \
+				booking_agent_id = %s and purchase_date between \
+				date_sub(curdate(), interval 6 month) and curdate() group by \
+				customer_email order by fac desc'
+			kind = True
+		else:
+			sql = 'select customer_email, sum(sold_price) as fac from ticket where \
+				booking_agent_id = %s and purchase_date between \
+				date_sub(curdate(), interval 1 year) and curdate() group by \
+				customer_email order by fac desc'
+			kind = False
+		# get data
+		keys = (booking_agent_id)
+		result = fetchall(sql,keys)
+		if not result:
+			error = 'No data available, please try again'
+			return render_template('agent.html', name = username,\
+				 myflight = my_flight,top_customer_error = error)
+		result.append(kind)
+		return render_template('agent.html', name = username,\
+				 myflight = my_flight, view_top_customer = result)
 
 	return render_template('agent.html', name = username, myflight = my_flight)
 

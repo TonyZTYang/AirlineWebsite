@@ -37,8 +37,8 @@ $ pip3 install -r requirement.txt -U
 - [x] View my flights
 - [x] Search for flights
 - [x] Purchase tickets
-- [ ] View my commission
-- [ ] View top customers
+- [x] View my commission
+- [x] View top customers
 - [x] Logout
 ### Airline Staff
 - [x] View flights

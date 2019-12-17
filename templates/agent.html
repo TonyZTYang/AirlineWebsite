@@ -2,7 +2,7 @@
 <html>
 
 <head>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
 </head>
 <style>
 		body {text-align: center;}
@@ -222,7 +222,84 @@
             </tr>
     </table>
     {% endif %}
+    
+        <!-- view top customers -->
+        <h2>View Top Cistpmer</h2>
+        <form action="/agent" method="POST">
+            <select name="option" style='margin-top:10px'>
+                <option value="sales" selected>Ticket Sales</option>
+                <option value="commission">Commission</option>
+            </select>
+            <input type="submit" name='top_customer_submit' value = 'View Top Customer' />
+            </form>
+            {% if top_customer_error %}
+            <p ><strong> {{top_customer_error}}</strong></p>
+            {% endif %}
+            {% if view_top_customer %}
+                {% if view_top_customer[-1] %}
+                <h2>Your top 5 customer by ticket sales </h2>
+                {% endif %}
+                {% if not view_top_customer[-1] %}
+                <h2>Your top 5 customer by commission </h2>
+                {% endif %}
+                <div align = 'center'>
+                    <canvas id="myChart" height="200" width="200" align = 'center'></canvas>
+                </div>
+                <!-- script for Chart -->
+                <script>
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: [{% for i in view_top_customer[0:-1] %} 
+                                        '{{i['customer_email']}}',
+                                    {% endfor %}],
+                            datasets: [{
+                                data: [{% for i in view_top_customer[0:-1] %} 
+                                        {{i['fac']}},
+                                    {% endfor %}],
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.2)',
+                                    'rgba(54, 162, 235, 0.2)',
+                                    'rgba(255, 206, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            },
+                            responsive: false
+                            // layout: {
+                            //     padding: {
+                            //         left: 400,
+                            //         right: 400,
+                            //         bottom: 400,
+                            //         top: 0
+                            //     }
+                            // }
+                        }
+                    });
+                </script>
+            {% endif %}
         
+    
 
 </body>
 
