@@ -355,13 +355,13 @@
    {% endif %}
 
    {% if flight_by_cus %}
+   <h2 style='margin-bottom: 10px; margin-top: 10px;'>Flight history for a single customer</h2>
     <table align= 'center'>
             <th>Airline Name</th>
             <th>Flight Number</th>
             <th>Departure Airport</th>
             <th>Arrival Airport</th>
             <th>Departure Time</th>	
-            <th>Arrival Time</th>
     
         {% for line in flight_by_cus %}
             <tr>
@@ -375,6 +375,31 @@
         {% endfor %}
     </table>
     {% endif %}
+
+    <!-- view top destination -->
+   <h2 style='margin-bottom: 10px; margin-top: 10px;'>View top destinations</h2>
+   <form action="/staff" method="POST">
+    <select name="option">
+        <option value="3 month" selected>Past 3 Months</option>
+        <option value="1 year">Past Year</option>
+    </select>
+    <input type="submit" name='view_top_des' value = 'Search for top destinations by time' /></br>
+    </form>
+
+    <!-- agent by commission -->
+   {% if top_des %}
+   <h2 style='margin-bottom: 10px; margin-top: 10px;'>Top 3 destination for the past {{top_des[-1]}}</h2>
+   <table align= 'center'>
+          <th>Destination</th>
+          <th>Frequency</th>
+          {% for line in top_des[0:-1] %}
+          <tr>
+              <td>{{line['arrival_airport']}}</td>
+              <td>{{line['frequency']}}</td>
+          </tr>
+          {% endfor %}
+   </table>
+   {% endif %}
 </body>
 
 </html>

@@ -930,7 +930,11 @@ def staff():
 			my_flight, view_agent_sales = result)
 	#view top 5 agent by commission
 	if request.form.get('agent_by_commission'):
-		sql = 'select email, booking_agent_id, sum(sold_price * 0.1) as commission from booking_agent natural join ticket where purchase_date between date_sub(curdate(), interval 1 year) and curdate() group by email, booking_agent_id order by commission desc limit 5'
+		sql = 'select email, booking_agent_id, sum(sold_price * 0.1) as \
+			commission from booking_agent natural join ticket where \
+			purchase_date between date_sub(curdate(), interval 1 year) and \
+			urdate() group by email, booking_agent_id order by commission \
+			desc limit 5'
 		keys =()
 		result = fetchall(sql,keys)
 		return render_template('staff.html', name = username, myflight = \
@@ -961,6 +965,19 @@ def staff():
 			my_flight, flight_by_cus_status = status)
 		return render_template('staff.html', name = username, myflight = \
 			my_flight, flight_by_cus = result)
+	# * view top destination
+	# view the most frequent customer
+	if request.form.get('view_top_des'):
+		timespan = request.form.get('option')
+		sql = 'select arrival_airport, count(*) as frequency from ticket \
+			natural join flight where airline_name = %s and departure_time \
+			between date_sub(curdate(), interval '+ timespan +  ') and \
+			curdate() group by arrival_airport order by frequency desc limit 3'
+		keys =(airline_name)
+		result = fetchall(sql,keys)
+		result.append(timespan)
+		return render_template('staff.html', name = username, myflight = \
+			my_flight, top_des = result)
 	
 	return render_template('staff.html', name = username, myflight = my_flight)
 
