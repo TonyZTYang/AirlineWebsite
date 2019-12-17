@@ -1112,6 +1112,27 @@ def staff():
 		result.append(total)
 		return render_template('staff.html', name = username, myflight = \
 			my_flight, view_reports = result)
+	# * view reports
+	if request.form.get('compare_rev'):
+		option = request.form.get('option')
+		result = {}
+		sql = 'select sum(sold_price) as rev from ticket where airline_name = %s and purchase_date between date_sub(curdate(), interval 1 '+ option + ') and curdate()'
+		keys = (airline_name)
+		rev1 = fetchone(sql, keys)['rev']
+		if not rev1:
+			return render_template('staff.html', name = username, \
+				myflight = my_flight)
+		sql = 'select sum(sold_price) as rev from ticket where booking_agent_id is not null and  airline_name = %s and purchase_date between date_sub(curdate(), interval 1 '+ option + ') and curdate()'
+		keys = (airline_name)
+		rev2 = fetchone(sql, keys)['rev']
+		if not rev2:
+			return render_template('staff.html', name = username, \
+				myflight = my_flight)
+		result['direct'] = rev1 - rev2
+		result['indirect'] = rev2
+		return render_template('staff.html', name = username, myflight = \
+			my_flight, compare_rev = result)
+		
 	return render_template('staff.html', name = username, myflight = my_flight)
 
 @app.route('/logout')
