@@ -329,6 +329,52 @@
        {% endfor %}
    </table>
    {% endif %}
+
+   <!-- view frequent customer -->
+   <h2 style='margin-bottom: 10px; margin-top: 10px;'>View frequent customers</h2>
+   <form action="/staff" method="POST">
+       <input type="submit" name='view_most_frequent' value = 'Most frequent customer' /></br>
+       <input type="text" name='customer_email' placeholder="Customer Email" />
+       <input type="submit" name='flight_by_cus' value = 'Search flight by customer' />
+       {% if flight_by_cus_status %}
+           <p class="error"><strong>{{flight_by_cus_status}}</strong></p>
+       {% endif %}
+    </form>
+
+    <!-- agent by commission -->
+   {% if most_frequent %}
+   <h2 style='margin-bottom: 10px; margin-top: 10px;'>The most frequent customer for the last year</h2>
+   <table align= 'center'>
+          <th>Email</th>
+          <th>Frequency</th>
+          <tr>
+              <td>{{most_frequent['customer_email']}}</td>
+              <td>{{most_frequent['frequency']}}</td>
+          </tr>
+   </table>
+   {% endif %}
+
+   {% if flight_by_cus %}
+    <table align= 'center'>
+            <th>Airline Name</th>
+            <th>Flight Number</th>
+            <th>Departure Airport</th>
+            <th>Arrival Airport</th>
+            <th>Departure Time</th>	
+            <th>Arrival Time</th>
+    
+        {% for line in flight_by_cus %}
+            <tr>
+                <td>{{line['airline_name']}}</td>
+                <td>{{line['flight_number']}}</td>
+                <td>{{line['departure_airport']}}</td>
+                <td>{{line['arrival_airport']}}</td>
+                <td>{{line['departure_time']}}</td>
+                <td>{{line['arrival_time']}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
 </body>
 
 </html>

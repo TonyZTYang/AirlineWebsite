@@ -935,6 +935,32 @@ def staff():
 		result = fetchall(sql,keys)
 		return render_template('staff.html', name = username, myflight = \
 			my_flight, view_agent_commission = result)
+
+	# * view frequent customer
+	# view the most frequent customer
+	if request.form.get('view_most_frequent'):
+		sql = 'select customer_email, count(*) as frequency from ticket where \
+			airline_name = %s and purchase_date between date_sub(curdate(), \
+			interval 1 year) and curdate() group by customer_email order by \
+			frequency desc limit 1'
+		keys =(airline_name)
+		result = fetchone(sql,keys)
+		return render_template('staff.html', name = username, myflight = \
+			my_flight, most_frequent = result)
+	# view flight by customer
+	if request.form.get('flight_by_cus'):
+		customer_email = request.form.get('customer_email')
+		sql = 'select distinct airline_name, flight_number, departure_time, \
+			 departure_airport, arrival_airport from ticket natural join \
+				flight where customer_email = %s and airline_name = %s'
+		keys =(customer_email,airline_name)
+		result = fetchall(sql,keys)
+		if not result:
+			status = 'something went wrong please try again'
+			return render_template('staff.html', name = username, myflight = \
+			my_flight, flight_by_cus_status = status)
+		return render_template('staff.html', name = username, myflight = \
+			my_flight, flight_by_cus = result)
 	
 	return render_template('staff.html', name = username, myflight = my_flight)
 
