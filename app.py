@@ -488,6 +488,9 @@ def customer():
 			group by month'
 		keys = (username)
 		result = fetchall(sql, keys)
+		if not result:
+			return render_template('customer.html', name=name, \
+				myflight=my_flight)
 		result.append(total_spending)
 		result.append(True)
 		return render_template('customer.html', name=name, myflight=my_flight,\
@@ -1049,7 +1052,7 @@ def staff():
 		sql = 'select email, booking_agent_id, sum(sold_price * 0.1) as \
 			commission from booking_agent natural join ticket where \
 			purchase_date between date_sub(curdate(), interval 1 year) and \
-			urdate() group by email, booking_agent_id order by commission \
+			curdate() group by email, booking_agent_id order by commission \
 			desc limit 5'
 		keys =()
 		result = fetchall(sql,keys)
