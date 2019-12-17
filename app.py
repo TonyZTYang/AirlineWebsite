@@ -470,6 +470,49 @@ def customer():
 			comment_status = 'Something went wrong, please try again'
 			return render_template('customer.html', \
 				name=name, myflight=my_flight,comment_status=comment_status)
+	
+	# * track my spending
+	# default view
+	if request.form.get('default_track_my_spending'):
+		#get total spending
+		sql = 'select sum(sold_price) as total from ticket where \
+			customer_email = %s and purchase_date between date_sub(curdate(),\
+			 interval 1 year) and curdate()'
+		keys = (username)
+		total_spending = fetchone(sql,keys)['total']
+
+		#get ticket detail
+		sql = 'select month(purchase_date) as month , sum(sold_price) as \
+			m_total from ticket where customer_email = %s and purchase_date \
+			between date_sub(curdate(), interval 6 month) and curdate() \
+			group by month'
+		keys = (username)
+		result = fetchall(sql, keys)
+		result.append(total_spending)
+		result.append(True)
+		return render_template('customer.html', name=name, myflight=my_flight,\
+			 track_my_spend = result)
+	# ranged view
+	if request.form.get('ranged_track_my_spending'):
+		start_date = request.form.get('start_date')
+		end_date = request.form.get('end_date')
+		#get total spending
+		sql = 'select sum(sold_price) as total from ticket where \
+			customer_email = %s and purchase_date between %s and %s'
+		keys = (username, start_date, end_date)
+		total_spending = fetchone(sql,keys)['total']
+
+		#get ticket detail
+		sql = 'select month(purchase_date) as month , sum(sold_price) as \
+			m_total from ticket where customer_email = %s and purchase_date \
+			between %s and %s group by month'
+		keys = (username, start_date, end_date)
+		result = fetchall(sql, keys)
+		result.append(total_spending)
+		result.append(False)
+		return render_template('customer.html', name=name, myflight=my_flight,\
+			 track_my_spend = result)
+
 
 	return render_template('customer.html', name=name, myflight=my_flight)
 
@@ -966,7 +1009,6 @@ def staff():
 		return render_template('staff.html', name = username, myflight = \
 			my_flight, flight_by_cus = result)
 	# * view top destination
-	# view the most frequent customer
 	if request.form.get('view_top_des'):
 		timespan = request.form.get('option')
 		sql = 'select arrival_airport, count(*) as frequency from ticket \
@@ -985,7 +1027,7 @@ def staff():
 def logout():
 	session.pop('username',None)
 	session.pop('usertype', None)
-	return redirect('/')
+	return redirect('/login')
 
 app.secret_key = secret_key
 

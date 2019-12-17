@@ -49,10 +49,10 @@ $ pip3 install -r requirement.txt -U
 - [x] View flight ratings
 - [x] Add/delete phone number
 - [x] View all the booking agents
-- [ ] View frequent customers
+- [x] View frequent customers
 - [ ] View reports
 - [ ] Comparison of revenue earned
-- [ ] View top destination
+- [x] View top destination
 - [x] Logout
 ### Enforcing complex constraints
 - [x] Prevention of http attacks
