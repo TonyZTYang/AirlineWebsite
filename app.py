@@ -1094,6 +1094,24 @@ def staff():
 		return render_template('staff.html', name = username, myflight = \
 			my_flight, top_des = result)
 	
+	# * view reports
+	if request.form.get('view_reports'):
+		start_date = request.form.get('start_date')
+		end_date = request.form.get('end_date')
+		sql = 'select month(purchase_date) as month, count(*) as m_total from \
+			ticket where airline_name = %s and purchase_date between %s and %s\
+				 group by month'
+		keys = (airline_name, start_date,end_date)
+		result = fetchall(sql, keys)
+		if not result:
+			return render_template('staff.html', name = username, \
+				myflight = my_flight)
+		total = 0
+		for line in result:
+			total += line['m_total']
+		result.append(total)
+		return render_template('staff.html', name = username, myflight = \
+			my_flight, view_reports = result)
 	return render_template('staff.html', name = username, myflight = my_flight)
 
 @app.route('/logout')
