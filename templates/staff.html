@@ -256,8 +256,8 @@
     {% endif %}
 
     <!-- change phone number  -->
-   <h2 style='margin-bottom: 10px; margin-top: 10px;'>Change phone number</h2>
-   <form action="/staff" method="POST">
+    <h2 style='margin-bottom: 10px; margin-top: 10px;'>Change phone number</h2>
+    <form action="/staff" method="POST">
        <input type="number" name = "phone_num" placeholder="Phone Number" required></br>
        <select name="option" style='margin-top:10px'>
                <option value="add" selected>Add</option>
@@ -267,7 +267,68 @@
        {% if change_phone_num_status %}
            <p class="error"><strong>{{change_phone_num_status}}</strong></p>
        {% endif %}
+    </form>
+
+    <!-- view all booking agent -->
+    <h2 style='margin-bottom: 10px; margin-top: 10px;'>View All Booking Agent</h2>
+    <form action="/staff" method="POST">
+        <input type="submit" name='view_all_agent' value = 'All Agent' /></br>
+        <select name="option">
+                <option value="month" selected>Past Month</option>
+                <option value="year">Past Year</option>
+            </select>
+        <input type="submit" name='agent_by_sales' value = 'Top 5 Agent by Sales' /><br>
+        <input type="submit" name='agent_by_commission' value = 'Top 5 Agent by Commission' />
    </form>
+
+   <!-- all booking agent -->
+   {% if view_all_agent %}
+   <h2 style='margin-bottom: 10px; margin-top: 10px;'>All Booking Agent</h2>
+   <table align= 'center'>
+          <th>Email</th>
+          <th>Booking Agent ID</th>
+       {% for line in view_all_agent %}
+          <tr>
+              <td>{{line['email']}}</td>
+              <td>{{line['booking_agent_id']}}</td>
+          </tr>
+       {% endfor %}
+   </table>
+   {% endif %}
+
+   <!-- agent by sales -->
+   {% if view_agent_sales %}
+   <h2 style='margin-bottom: 10px; margin-top: 10px;'>Top 5 Agent by Sales for the Past {{view_agent_sales[-1]}} </h2>
+   <table align= 'center'>
+          <th>Email</th>
+          <th>Booking Agent ID</th>
+          <th>Ticket Sales</th>
+       {% for line in view_agent_sales[0:-1] %}
+          <tr>
+              <td>{{line['email']}}</td>
+              <td>{{line['booking_agent_id']}}</td>
+              <td>{{line['sales']}}</td>
+          </tr>
+       {% endfor %}
+   </table>
+   {% endif %}
+
+   <!-- agent by commission -->
+   {% if view_agent_commission %}
+   <h2 style='margin-bottom: 10px; margin-top: 10px;'>Top 5 Booking Agent by Commission for the Past Year</h2>
+   <table align= 'center'>
+          <th>Email</th>
+          <th>Booking Agent ID</th>
+          <th>Commission</th>
+       {% for line in view_agent_commission %}
+          <tr>
+              <td>{{line['email']}}</td>
+              <td>{{line['booking_agent_id']}}</td>
+              <td>{{line['commission']}}</td>
+          </tr>
+       {% endfor %}
+   </table>
+   {% endif %}
 </body>
 
 </html>

@@ -908,6 +908,34 @@ def staff():
 					myflight = my_flight, change_phone_num_status = \
 						status)
 	
+	# * view all booking agent
+	#view all agent
+	if request.form.get('view_all_agent'):
+		sql = 'select email, booking_agent_id from booking_agent'
+		keys =()
+		result = fetchall(sql,keys)
+		return render_template('staff.html', name = username, myflight = \
+			my_flight, view_all_agent = result)
+	#view top 5 agent by sales
+	if request.form.get('agent_by_sales'):
+		timespan = request.form.get('option')
+		sql = 'select email, booking_agent_id, count(*) as sales from \
+			booking_agent natural join ticket where purchase_date between \
+			date_sub(curdate(), interval 1 ' + timespan + ') and curdate() \
+			group by email, booking_agent_id order by sales desc limit 5'
+		keys =()
+		result = fetchall(sql,keys)
+		result.append(timespan)
+		return render_template('staff.html', name = username, myflight = \
+			my_flight, view_agent_sales = result)
+	#view top 5 agent by commission
+	if request.form.get('agent_by_commission'):
+		sql = 'select email, booking_agent_id, sum(sold_price * 0.1) as commission from booking_agent natural join ticket where purchase_date between date_sub(curdate(), interval 1 year) and curdate() group by email, booking_agent_id order by commission desc limit 5'
+		keys =()
+		result = fetchall(sql,keys)
+		return render_template('staff.html', name = username, myflight = \
+			my_flight, view_agent_commission = result)
+	
 	return render_template('staff.html', name = username, myflight = my_flight)
 
 @app.route('/logout')
