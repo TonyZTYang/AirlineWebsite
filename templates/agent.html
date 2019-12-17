@@ -190,6 +190,40 @@
         <p ><strong> {{purchase_error}}</strong></p>
     {% endif %}
 
+    <!-- View my commission -->
+    <h2 style='margin-bottom: 10px; margin-top: 10px;'>View my commission</h2>
+    {% if not view_commission %}
+        <form action="/agent" method="POST">
+            <input type="submit" name = 'default_view_commission'value = View />
+        </form>
+        {% if view_commission_error %}
+        <p ><strong> {{view_commission_error}}</strong></p>
+        {% endif %}
+    {% endif %}
+
+    {% if view_commission %}
+        <form action="/agent" method="POST">
+            <span>Start Date: </span>
+            <input type="date" name = "depart_date" required><br>
+            <span>End Date : </span>	
+            <input type="date" name = "return_date" required><br>
+            <input type="submit" name = 'ranged_view_commission'value = Search />
+        </form>
+        
+        <h3 style='margin-bottom: 10px; margin-top: 10px;'>Your commission</h3>
+        <table align= 'center'>
+            <th>Total Commission</th>
+            <th>Tickets Sold</th>
+            <th>Average Commission</th>
+            <tr>
+                <td>{{view_commission['total']}}</td>
+                <td>{{view_commission['sales']}}</td>
+                <td>{{view_commission['average']}}</td>
+            </tr>
+    </table>
+    {% endif %}
+        
+
 </body>
 
 </html>

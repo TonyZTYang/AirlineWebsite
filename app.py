@@ -682,6 +682,48 @@ def agent():
 			purchase_error = 'Purchase failed. Please try again.'
 			return render_template('agent.html', user=username, \
 				myflight=my_flight, purchase_error= purchase_error)
+	
+	# * view commission
+	#default view
+	if request.form.get('default_view_commission'):
+		#fetch booking agent id
+		sql = 'select booking_agent_id from booking_agent where email = %s'
+		keys = (username)
+		booking_agent_id = fetchone(sql,keys)['booking_agent_id']
+		# get data
+		sql = 'select sum(sold_price * 0.1) as total, count(*) as sales from \
+			ticket where booking_agent_id = %s and purchase_date between \
+			date_sub(curdate(), interval 30 day) and curdate()'
+		keys = (booking_agent_id)
+		result = fetchone(sql,keys)
+		if result['sales'] == 0:
+			error = 'No commission available, please try again'
+			return render_template('agent.html', name = username,\
+				 myflight = my_flight,view_commission_error = error)
+		result['average'] = result['total'] / result['sales']
+		return render_template('agent.html', name = username,\
+				 myflight = my_flight, view_commission = result)
+	# ranged view
+	if request.form.get('ranged_view_commission'):
+		start_date = request.form.get('start_date')
+		end_date = request.form.get('end_date')
+		#fetch booking agent id
+		sql = 'select booking_agent_id from booking_agent where email = %s'
+		keys = (username)
+		booking_agent_id = fetchone(sql,keys)['booking_agent_id']
+		# get data
+		sql = 'select sum(sold_price * 0.1) as total, count(*) as sales from \
+			ticket where booking_agent_id = %s and purchase_date between \
+			%s and %s'
+		keys = (booking_agent_id,start_date,end_date)
+		result = fetchone(sql,keys)
+		if result['sales'] == 0:
+			error = 'No commission available, please try again'
+			return render_template('agent.html', name = username,\
+				 myflight = my_flight,view_commission_error = error)
+		result['average'] = result['total'] / result['sales']
+		return render_template('agent.html', name = username,\
+				 myflight = my_flight, view_commission = result)
 
 	return render_template('agent.html', name = username, myflight = my_flight)
 
