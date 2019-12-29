@@ -1,6 +1,9 @@
 '''A module storing common utility funcions'''
 from flask import Flask, render_template, request, session, url_for, redirect
-from config import db
+try:
+	from config import db
+except ImportError:
+	from config_public import db
 
 #database functions
 def fetchall(sql,keys):

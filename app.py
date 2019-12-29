@@ -1,26 +1,14 @@
 #Import library
 from flask import Flask, render_template, request, session, url_for, redirect,g
-
 from hashlib import md5
 import random
-# import module
-from config import db, secret_key
 from util import fetchall, fetchone, modify, doorman
 
-'''
-# replacement of config.py
-import pymysql.cursors
+try:
+	from config import secret_key
+except ImportError:
+	from config_public import secret_key
 
-secret_key = 'Some secret key no one should know'
-
-#Configure MySQL
-db = pymysql.connect(host='mysql server address',
-                       user='username',
-                       password='password',
-                       db= 'airline',
-                       charset='utf8mb4',
-                       cursorclass=pymysql.cursors.DictCursor)
-'''
 
 #Initialize the app from Flask
 app = Flask(__name__)
