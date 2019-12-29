@@ -50,8 +50,8 @@ $ pip3 install -r requirement.txt -U
 - [x] Add/delete phone number
 - [x] View all the booking agents
 - [x] View frequent customers
-- [ ] View reports
-- [ ] Comparison of revenue earned
+- [x] View reports
+- [x] Comparison of revenue earned
 - [x] View top destination
 - [x] Logout
 ### Enforcing complex constraints
