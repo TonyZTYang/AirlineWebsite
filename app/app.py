@@ -1143,4 +1143,4 @@ app.secret_key = secret_key
 #debug = True -> you don't have to restart flask
 #for changes to go through, TURN OFF FOR PRODUCTION
 if __name__ == "__main__":
-	app.run('127.0.0.1', 5000, debug = True)
+	app.run('0.0.0.0', 5000, debug = True)
