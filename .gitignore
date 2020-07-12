@@ -1,3 +1,4 @@
 config.py
 *.pyc
 documentation/Part 1_Part 2_Part 3 of Course Project Fall 2019.pdf
+app/dev.sh

@@ -1,0 +1,23 @@
+version: "3.7" # compose version
+
+services: # containers
+  
+  app: # automatically become a network alias
+    depends_on: 
+      - mysql
+    image: python:3.8-slim
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    volumes: 
+      - ./app:/app
+    ports:
+      - 5000:5000
+
+  mysql: # auto network alias
+    image: mysql:8
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+    environment: 
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: air_demo
