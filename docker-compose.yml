@@ -13,6 +13,7 @@ services: # containers
 
   mysql: # auto network alias
     image: mysql:8
+    command: --lower_case_table_names=1
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
     ports: 
