@@ -1,5 +1,5 @@
 # Air Ticket Reservation System 
-A python database system for a hypothetic airline company as the final project for CSCI-SHU 213 Databases.
+A python database system for a hypothetic airline company as the class project for CSCI-SHU 213 Databases.
 
 HTML <-> Flask <-> Mysql
 
